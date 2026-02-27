@@ -1,0 +1,51 @@
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import type { Id, Note } from '../types/notes';
+
+interface NotesState {
+    notes: Note[];
+    addNote: (note: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>) => void;
+    updateNote: (id: Id, updates: Partial<Note>) => void;
+    deleteNote: (id: Id) => void;
+}
+
+function generateId() {
+    return Math.random().toString(36).substring(2, 9);
+}
+
+export const useNotesStore = create<NotesState>()(
+    persist(
+        (set) => ({
+            notes: [],
+
+            addNote: (note) => {
+                const newNote: Note = {
+                    ...note,
+                    id: generateId(),
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                };
+                set((state) => ({ notes: [newNote, ...state.notes] }));
+            },
+
+            updateNote: (id, updates) => {
+                set((state) => ({
+                    notes: state.notes.map((note) =>
+                        note.id === id
+                            ? { ...note, ...updates, updatedAt: new Date().toISOString() }
+                            : note
+                    ),
+                }));
+            },
+
+            deleteNote: (id) => {
+                set((state) => ({
+                    notes: state.notes.filter((note) => note.id !== id),
+                }));
+            },
+        }),
+        {
+            name: 'weedoo-notes-storage',
+        }
+    )
+);

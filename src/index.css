@@ -1,0 +1,345 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── WeeDoo Micro-animations ───────────────────────────────────────────── */
+
+/* Toggle icon: rises from bottom like sun/moon on horizon */
+@keyframes wd-rise {
+  0% {
+    transform: translateY(110%);
+    opacity: 0;
+  }
+
+  60% {
+    transform: translateY(-8%);
+    opacity: 1;
+  }
+
+  80% {
+    transform: translateY(4%);
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.wd-rise {
+  animation: wd-rise 0.5s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}
+
+/* Nav tab icon: pops up when becoming active */
+@keyframes wd-nav-pop {
+  0% {
+    transform: scale(1) translateY(0);
+  }
+
+  35% {
+    transform: scale(1.35) translateY(-5px);
+  }
+
+  65% {
+    transform: scale(0.92) translateY(1px);
+  }
+
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+.wd-nav-pop {
+  animation: wd-nav-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Nav label: fades + slides up when becoming active */
+@keyframes wd-label-up {
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.wd-label-up {
+  animation: wd-label-up 0.35s ease-out both;
+}
+
+/* Key action: quick scale bounce (for +, delete, confirm buttons) */
+@keyframes wd-tap {
+  0% {
+    transform: scale(1);
+  }
+
+  40% {
+    transform: scale(0.88);
+  }
+
+  70% {
+    transform: scale(1.08);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.wd-tap {
+  animation: wd-tap 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Card entrance */
+@keyframes wd-card-in {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.wd-card-in {
+  animation: wd-card-in 0.3s ease-out both;
+}
+
+
+@layer base {
+  :root {
+    /* Shadcn tokens */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+
+    /* WeeDoo semantic tokens — Light */
+    --wd-bg: 248 250 252;
+    /* slate-50  */
+    --wd-surface: 255 255 255;
+    /* white     */
+    --wd-surface-2: 241 245 249;
+    /* slate-100 */
+    --wd-border: 226 232 240;
+    /* slate-200 */
+    --wd-text-1: 15 23 42;
+    /* slate-900 */
+    --wd-text-2: 51 65 85;
+    /* slate-700 */
+    --wd-text-3: 100 116 139;
+    /* slate-500 */
+    --wd-text-4: 148 163 184;
+    /* slate-400 */
+    --wd-green: 59 191 160;
+    /* #3bbfa0   */
+    --wd-green-soft: 226 245 241;
+    /* #e2f5f1   */
+    --wd-nav-bg: 255 255 255;
+    /* white     */
+  }
+
+  .dark {
+    /* Shadcn tokens — dark */
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+
+    /* WeeDoo semantic tokens — Dark */
+    --wd-bg: 15 23 42;
+    /* slate-900  */
+    --wd-surface: 30 41 59;
+    /* slate-800  */
+    --wd-surface-2: 51 65 85;
+    /* slate-700  */
+    --wd-border: 71 85 105;
+    /* slate-600  */
+    --wd-text-1: 248 250 252;
+    /* slate-50   */
+    --wd-text-2: 226 232 240;
+    /* slate-200  */
+    --wd-text-3: 148 163 184;
+    /* slate-400  */
+    --wd-text-4: 100 116 139;
+    /* slate-500  */
+    --wd-green: 59 191 160;
+    /* #3bbfa0 — same */
+    --wd-green-soft: 14 42 38;
+    /* very dark teal */
+    --wd-nav-bg: 30 41 59;
+    /* slate-800  */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    background-color: rgb(var(--wd-bg));
+    color: rgb(var(--wd-text-2));
+  }
+}
+
+/* ─── WeeDoo utility classes using semantic tokens ─────────────────────── */
+.wd-bg {
+  background-color: rgb(var(--wd-bg));
+}
+
+.wd-surface {
+  background-color: rgb(var(--wd-surface));
+}
+
+.wd-surface-2 {
+  background-color: rgb(var(--wd-surface-2));
+}
+
+.wd-border {
+  border-color: rgb(var(--wd-border));
+}
+
+.wd-text-1 {
+  color: rgb(var(--wd-text-1));
+}
+
+.wd-text-2 {
+  color: rgb(var(--wd-text-2));
+}
+
+.wd-text-3 {
+  color: rgb(var(--wd-text-3));
+}
+
+.wd-text-4 {
+  color: rgb(var(--wd-text-4));
+}
+
+.wd-green {
+  color: rgb(var(--wd-green));
+}
+
+.wd-green-bg {
+  background-color: rgb(var(--wd-green));
+}
+
+.wd-green-soft {
+  background-color: rgb(var(--wd-green-soft));
+}
+
+.wd-nav {
+  background-color: rgb(var(--wd-nav-bg));
+}
+
+/* ─── Notes Editor: custom heading scale ──────────────────────────────── */
+.notes-editor {
+  font-family: inherit;
+  color: rgb(var(--wd-text-2));
+}
+
+.notes-editor h1,
+.notes-editor h2,
+.notes-editor h3,
+.notes-editor h4 {
+  font-family: inherit;
+  color: rgb(var(--wd-text-1));
+  font-weight: 700;
+  line-height: 1.3;
+  margin-top: 1.1em;
+  margin-bottom: 0.4em;
+}
+
+.notes-editor h1 {
+  font-size: 1.45rem;
+}
+
+.notes-editor h2 {
+  font-size: 1.25rem;
+}
+
+.notes-editor h3 {
+  font-size: 1.1rem;
+}
+
+.notes-editor h4 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.notes-editor p {
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+  font-size: 1rem;
+  color: rgb(var(--wd-text-2));
+}
+
+.notes-editor strong {
+  font-weight: 700;
+  color: rgb(var(--wd-text-1));
+}
+
+.notes-editor em {
+  font-style: italic;
+}
+
+.notes-editor u {
+  text-decoration: underline;
+}
+
+.notes-editor ul,
+.notes-editor ol {
+  padding-left: 1.4em;
+  margin: 0.5em 0;
+}
+
+.notes-editor ul {
+  list-style-type: disc;
+}
+
+.notes-editor ol {
+  list-style-type: decimal;
+}
+
+.notes-editor li {
+  margin: 0.2em 0;
+  font-size: 1rem;
+  color: rgb(var(--wd-text-2));
+}
