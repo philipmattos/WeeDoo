@@ -221,23 +221,13 @@ export const NotesModal = () => {
     }, [activeNote?.id]); // Only trigger on note id change
 
     const handleCreateNote = useCallback(() => {
-        const now = new Date().toISOString();
         const stub = {
-            id: 'stub',
             title: 'Nova Nota',
             content: '',
-            createdAt: now,
-            updatedAt: now,
         };
-        addNote(stub);
-
-        // After store update, get the newest note (added to front of array)
-        setTimeout(() => {
-            const fresh = useNotesStore.getState().notes;
-            const newest = fresh[0];
-            setActiveNote(newest);
-            setView('editor');
-        }, 50);
+        const newNote = addNote(stub);
+        setActiveNote(newNote);
+        setView('editor');
     }, [addNote]);
 
     const handleOpenNote = useCallback((note: Note) => {

@@ -5,10 +5,10 @@ import type { Task, TaskPriority } from '../types/task';
 interface TaskState {
     tasks: Task[];
     addTask: (title: string, priority: TaskPriority, category: string) => void;
-    toggleTaskCompletion: (id: number) => void;
-    updateTaskTitle: (id: number, newTitle: string) => void;
-    updateTaskDueDate: (id: number, dueDate: string | undefined) => void;
-    deleteTask: (id: number) => void;
+    toggleTaskCompletion: (id: string) => void;
+    updateTaskTitle: (id: string, newTitle: string) => void;
+    updateTaskDueDate: (id: string, dueDate: string | undefined) => void;
+    deleteTask: (id: string) => void;
     getCategories: () => string[];
 }
 
@@ -21,7 +21,7 @@ export const useTaskStore = create<TaskState>()(
 
             addTask: (title, priority, category) => {
                 const newTask: Task = {
-                    id: Date.now(),
+                    id: crypto.randomUUID(),
                     title,
                     priority,
                     category: category || 'Geral',

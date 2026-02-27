@@ -137,31 +137,33 @@ export const KanbanModal = () => {
 
         // Dropping Task over another Task
         if (isActiveATask && isOverATask) {
-            const activeIndex = tasks.findIndex((t) => t.id === activeId);
-            const overIndex = tasks.findIndex((t) => t.id === overId);
+            useKanbanStore.setState((state) => {
+                const activeIndex = state.tasks.findIndex((t) => t.id === activeId);
+                const overIndex = state.tasks.findIndex((t) => t.id === overId);
 
-            if (tasks[activeIndex].columnId !== tasks[overIndex].columnId) {
-                const newTasks = [...tasks];
-                newTasks[activeIndex] = {
-                    ...newTasks[activeIndex],
-                    columnId: tasks[overIndex].columnId,
-                };
-                setTasks(arrayMove(newTasks, activeIndex, overIndex));
-            } else {
-                setTasks(arrayMove(tasks, activeIndex, overIndex));
-            }
+                if (activeIndex === -1 || overIndex === -1) return state;
+
+                if (state.tasks[activeIndex].columnId !== state.tasks[overIndex].columnId) {
+                    const newTasks = [...state.tasks];
+                    newTasks[activeIndex] = { ...newTasks[activeIndex], columnId: state.tasks[overIndex].columnId };
+                    return { tasks: arrayMove(newTasks, activeIndex, overIndex) };
+                } else {
+                    return { tasks: arrayMove(state.tasks, activeIndex, overIndex) };
+                }
+            });
         }
 
         // Dropping Task over a empty column area
         const isOverAColumn = over.data.current?.type === 'Column';
         if (isActiveATask && isOverAColumn) {
-            const activeIndex = tasks.findIndex((t) => t.id === activeId);
-            const newTasks = [...tasks];
-            newTasks[activeIndex] = {
-                ...newTasks[activeIndex],
-                columnId: overId,
-            };
-            setTasks(arrayMove(newTasks, activeIndex, activeIndex));
+            useKanbanStore.setState((state) => {
+                const activeIndex = state.tasks.findIndex((t) => t.id === activeId);
+                if (activeIndex === -1) return state;
+
+                const newTasks = [...state.tasks];
+                newTasks[activeIndex] = { ...newTasks[activeIndex], columnId: overId };
+                return { tasks: arrayMove(newTasks, activeIndex, activeIndex) };
+            });
         }
     }
 

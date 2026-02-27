@@ -4,13 +4,9 @@ import type { Id, Note } from '../types/notes';
 
 interface NotesState {
     notes: Note[];
-    addNote: (note: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>) => void;
+    addNote: (note: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>) => Note;
     updateNote: (id: Id, updates: Partial<Note>) => void;
     deleteNote: (id: Id) => void;
-}
-
-function generateId() {
-    return Math.random().toString(36).substring(2, 9);
 }
 
 export const useNotesStore = create<NotesState>()(
@@ -21,11 +17,12 @@ export const useNotesStore = create<NotesState>()(
             addNote: (note) => {
                 const newNote: Note = {
                     ...note,
-                    id: generateId(),
+                    id: crypto.randomUUID(),
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString(),
                 };
                 set((state) => ({ notes: [newNote, ...state.notes] }));
+                return newNote;
             },
 
             updateNote: (id, updates) => {
@@ -45,7 +42,7 @@ export const useNotesStore = create<NotesState>()(
             },
         }),
         {
-            name: 'weedoo-notes-storage',
+            name: 'weedoo_notes',
         }
     )
 );

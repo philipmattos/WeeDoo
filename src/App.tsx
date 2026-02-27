@@ -11,7 +11,7 @@ import {
     Columns, ShoppingCart, AlertCircle, Calendar1,
     ClipboardList, StickyNote, ArrowRight
 } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, isBefore, endOfDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 type ModalType = 'notes' | 'tasks' | 'kanban' | 'calendar' | 'groceries' | null;
@@ -228,7 +228,7 @@ const App = () => {
                                 {upcomingTasks.map(task => {
                                     const d = new Date(task.dueDate!);
                                     const hasTime = d.getHours() !== 0 || d.getMinutes() !== 0;
-                                    const isOverdue = d < new Date();
+                                    const isOverdue = isBefore(hasTime ? d : endOfDay(d), new Date());
                                     return (
                                         <div key={task.id} className="flex items-center gap-3">
                                             <div className={`shrink-0 w-11 h-11 rounded-xl flex flex-col items-center justify-center text-center ${isOverdue ? 'bg-red-50 dark:bg-red-900/30 text-red-500' : 'bg-[#e2f5f1] dark:bg-teal-900/40 text-[#21434b] dark:text-teal-300'}`}>

@@ -1,7 +1,7 @@
 export type TaskPriority = 'baixa' | 'media' | 'alta';
 
 export interface Task {
-    id: number;
+    id: string;
     title: string;
     priority: TaskPriority;
     category: string;

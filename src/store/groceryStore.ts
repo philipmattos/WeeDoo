@@ -17,7 +17,7 @@ export const useGroceryStore = create<GroceryState>()(
 
             addItem: (text) => {
                 const newItem: GroceryItem = {
-                    id: Date.now().toString(),
+                    id: crypto.randomUUID(),
                     text,
                     checked: false,
                 };

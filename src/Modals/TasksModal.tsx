@@ -19,9 +19,9 @@ type FilterType = 'todos' | 'pendentes' | 'concluidos' | 'alta';
 
 // ─── Date/Time Picker Popover ───────────────────────────────────────────
 interface DatePickerProps {
-    taskId: number;
+    taskId: string;
     dueDate?: string;
-    onSave: (id: number, iso: string | undefined) => void;
+    onSave: (id: string, iso: string | undefined) => void;
 }
 
 const DatePicker = ({ taskId, dueDate, onSave }: DatePickerProps) => {
@@ -164,11 +164,11 @@ export const TasksModal = () => {
     const [currentFilter, setCurrentFilter] = useState<FilterType>('todos');
     const [currentCategoryFilter, setCurrentCategoryFilter] = useState<string>('');
 
-    const [editingId, setEditingId] = useState<number | null>(null);
+    const [editingId, setEditingId] = useState<string | null>(null);
     const [editTitle, setEditTitle] = useState('');
     const editInputRef = useRef<HTMLInputElement>(null);
 
-    const [taskToDelete, setTaskToDelete] = useState<number | null>(null);
+    const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
 
     const categories = getCategories();
 

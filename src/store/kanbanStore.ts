@@ -31,7 +31,7 @@ export const useKanbanStore = create<KanbanState>()(
             tasks: [],
 
             addColumn: (title) => {
-                const newCol: KanbanColumn = { id: generateId(), title };
+                const newCol: KanbanColumn = { id: crypto.randomUUID(), title };
                 set((state) => ({ columns: [...state.columns, newCol] }));
             },
 
@@ -50,7 +50,7 @@ export const useKanbanStore = create<KanbanState>()(
 
             addTask: (columnId, content) => {
                 const newTask: KanbanTask = {
-                    id: generateId(),
+                    id: crypto.randomUUID(),
                     columnId,
                     content,
                     createdAt: new Date().toISOString(),
@@ -74,11 +74,7 @@ export const useKanbanStore = create<KanbanState>()(
             setTasks: (tasks) => set({ tasks }),
         }),
         {
-            name: 'weedoo-kanban-storage',
+            name: 'weedoo_kanban',
         }
     )
 );
-
-function generateId() {
-    return Math.random().toString(36).substring(2, 9);
-}
