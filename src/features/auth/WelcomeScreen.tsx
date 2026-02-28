@@ -107,7 +107,7 @@ export const WelcomeScreen = () => {
                 }
                 .anim-logo {
                     opacity: 0;
-                    animation: fade-in-logo 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.8s, float-and-spin 10.8s infinite 2.3s;
+                    animation: fade-in-logo 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.8s, float-and-spin 8.8s infinite 2.3s;
                 }
                 .anim-shadow {
                     opacity: 0;
