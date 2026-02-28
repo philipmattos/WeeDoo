@@ -279,17 +279,17 @@ const App = () => {
                                 {!isForceSyncing && 'Sincronizar'}
                             </button>
 
-                            <div className="ml-auto w-10 relative flex justify-end h-full">
+                            <div className="ml-auto w-10 relative flex justify-end items-center h-10">
                                 {/* Copy ID Badge */}
-                                <div className={`absolute right-0 flex items-center justify-center h-10 px-3 bg-wd-primary text-white rounded-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${copiedId ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
+                                <div className={`absolute top-0 right-0 flex items-center justify-center h-10 px-3 bg-wd-primary text-white rounded-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${copiedId ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
                                     <CircleCheck size={18} />
                                 </div>
                                 {/* Sync Success Badge */}
-                                <div className={`absolute right-0 flex items-center justify-center h-10 px-3 bg-wd-primary text-white rounded-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${syncResult === 'success' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
+                                <div className={`absolute top-0 right-0 flex items-center justify-center h-10 px-3 bg-wd-primary text-white rounded-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${syncResult === 'success' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
                                     <CloudCheck size={18} />
                                 </div>
                                 {/* Sync Error Badge */}
-                                <div className={`absolute right-0 flex items-center justify-center h-10 px-3 bg-red-500 text-white rounded-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${syncResult === 'error' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
+                                <div className={`absolute top-0 right-0 flex items-center justify-center h-10 px-3 bg-red-500 text-white rounded-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${syncResult === 'error' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
                                     <XCircle size={18} />
                                 </div>
                             </div>
