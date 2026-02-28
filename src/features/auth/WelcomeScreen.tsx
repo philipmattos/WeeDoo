@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Copy, AlertTriangle, LogIn, ArrowRight, Loader2, LaptopMinimalCheck, CircleAlert } from 'lucide-react';
+import { Copy, AlertTriangle, LogIn, ArrowRight, Loader2, LaptopMinimalCheck, CircleAlert, UserRoundKey } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog';
 import { fetchUserDataRecord } from '../../services/airtable';
 import { useTaskStore } from '../../store/taskStore';
@@ -137,7 +137,7 @@ export const WelcomeScreen = () => {
                         <LaptopMinimalCheck size={48} strokeWidth={2.5} />
                     </div>
                     {/* Sombra da flutuação */}
-                    <div className="anim-shadow absolute -bottom-4 left-1/2 -translate-x-1/2 w-16 h-4 bg-black/15 blur-md rounded-full"></div>
+                    <div className="anim-shadow absolute -bottom-4 left-1/2 -translate-x-1/2 w-16 h-4 bg-black/35 blur-md rounded-full"></div>
                 </div>
 
                 <div className="anim-content-1">
@@ -154,7 +154,7 @@ export const WelcomeScreen = () => {
                     onClick={handleCreateNew}
                     className="w-full h-14 text-lg rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.15)] hover:shadow-xl hover:-translate-y-1 transition-all bg-white hover:bg-slate-50 font-bold text-wd-primary flex items-center justify-center gap-3"
                 >
-                    <LaptopMinimalCheck size={24} strokeWidth={2.5} />
+                    <UserRoundKey size={28} strokeWidth={2.5} />
                     Criar novo usuário
                 </Button>
 
