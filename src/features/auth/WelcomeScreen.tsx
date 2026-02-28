@@ -152,7 +152,7 @@ export const WelcomeScreen = () => {
             <div className="space-y-6 z-10 w-full flex flex-col items-center anim-content-1">
                 <Button
                     onClick={handleCreateNew}
-                    className="w-full h-14 text-lg rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.15)] hover:shadow-xl hover:-translate-y-1 transition-all bg-white hover:bg-slate-50 font-bold text-wd-primary flex items-center justify-center gap-3 [&_svg]:size-9"
+                    className="w-full h-14 text-lg rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.15)] hover:shadow-xl hover:-translate-y-1 transition-all bg-white hover:bg-slate-50 font-bold text-wd-primary flex items-center justify-center gap-3 [&_svg]:size-6"
                 >
                     <UserRoundKey size={32} strokeWidth={2.5} />
                     Criar novo usuário
