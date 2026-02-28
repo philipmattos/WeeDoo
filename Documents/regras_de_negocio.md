@@ -6,11 +6,11 @@ Este documento detalha as regras de negócio centrais e condições operacionais
 - **Acesso Aberto e Sem Login:** O aplicativo é completamente aberto e não possui sistema de contas, senhas ou autenticação (Login). Todo o uso do aplicativo é anônimo.
 - **Armazenamento:** Todas as informações do usuário (Tarefas, Notas, Projetos Kanban, Calendário, etc.) são salvas direta e exclusivamente no Cache/LocalStorage do navegador do usuário apontando para a sua máquina.
 
-## 2. Compartilhamento via Nuvem (Listas de Compras)
-O único momento em que a aplicação se comunica com um Banco de Dados na nuvem (Airtable) é para uso da funcionalidade de compartilhamento de **Listas de Compras**.
-- **Segurança da Instância Pública:** Como o projeto (e o repositório GitHub) é público, as chaves e dados do banco de dados não ficam expostas no código. Elas são injetadas através de Variáveis de Ambiente diretamente no servidor de hospedagem, (Netlify, Vercel ou outros).
-- **Mecânica de Sincronização:** Quando o usuário clica em "Salvar e Compartilhar" em uma Lista de Compras, o App cria um registro anônimo no Airtable. Isso gera um "Código de Conexão" (ID na nuvem).
-- **Acesso por Código:** Qualquer pessoa que inserir esse ID de nuvem no seu próprio aparelho sincronizará aquela lista específica. Ambos passarão a ver e atualizar a lista simultaneamente. O armazenamento de outras partes do sistema permanece estritamente local.
+## 2. Compartilhamento via Nuvem (Savecode e Compras)
+O aplicativo realiza comunicação blindada com a Nuvem (Airtable) através de um backend Proxy Serverless no Netlify para gerenciar Dados Globais e Funcionalidades Rápidas.
+- **Sincronização de Progresso (Savecode):** O usuário pode opcionalmente gerar um "Savecode". Com essa ID em mãos, suas listas, notas e configurações são backupeadas integralmente em 5 tabelas no Airtable toda vez que ele clica em "Sincronizar". 
+- **Listas de Compras:** Continua permitindo compartilhamento assíncrono entre múltiplos usuários. O app gera um registro na nuvem, e quem insere aquele código específico enxerga a mesma compra de mantimentos em tempo real, sem necessidade de logins/senhas.
+- **Segurança da Instância Pública:** Como o projeto (e o repositório GitHub) é público, as chaves e dados do banco de dados não ficam expostas no código. Elas são injetadas através de Variáveis de Ambiente diretamente no servidor de hospedagem (Netlify Functions) que as isola perfeitamente através de Proxy.
 
 ## 3. UI e Experiência do Usuário
 - **Arquitetura de Navegação:** Todas as ferramentas e microaplicações do sistema (Notas, Tarefas, etc) abrem exclusivamente dentro de janelas flutuantes organizadas - os **Modais**, que são controlados por um gerenciador central na base do app. 

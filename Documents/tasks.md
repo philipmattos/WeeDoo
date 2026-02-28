@@ -17,6 +17,10 @@
 - [x] Calendário implementado — Agenda com compromissos + integração com Tarefas (due date)
 - [x] Integrar Airtable na Lista de Compras — compartilhamento via link (Local-first / Sem Login)
 - [x] Limpeza de warnings de compilação, ajustes finos de tipagem e otimizações Tailwind🚀
+- [x] Arquitetura de Savecodes: Tela de Welcome e mecânica de gerar chaves primárias
+- [x] Integração Backend Multi-Tabelas: 5 tabelas no Airtable espelhando zustand states independentes
+- [x] Proxy Serverless: Construção das Netlify Functions locais para blindagem de chaves API
+- [x] Hidratação: Sistema rodando `Promise.all` para montar perfil do usuário da nuvem na reentrada
 
 ---
 

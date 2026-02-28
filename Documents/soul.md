@@ -5,14 +5,14 @@
 ## 1. Arquitetura e Stack
 - **Framework:** React com TypeScript, construído usando o bundler **Vite**.
 - **Estilização:** **Tailwind CSS** integrado com **Shadcn UI** para construção do design system e padronização visual.
-- **Backend/DB:** Totalmente arquitetado em **Local-First** (armazenamento persistente do dispositivo), conectado de forma leve a instâncias do **Airtable** gerenciadas por variáveis de ambiente ocultas do Netlify para nuvem.
+- **Backend/DB:** Totalmente arquitetado em **Local-First**, porém conectado por trás dos panos a funções **Serverless (Netlify Functions)** que isolam chaves e comunicam seguramento com uma instância **Airtable** de 5 tabelas atômicas para salvar tudo na nuvem via "Savecode".
 - **Abordagem Mobile-First:** A UI deve ser primariamente pensada para dispositivos móveis, com visual e sensação próximos de aplicativos nativos. Utilizaremos modais/janelas sobrepostas para facilitar a visualização de abas e formulários.
 
 ## 2. Regras de Negócio e Modos de Uso
 O aplicativo possui foco em fricção zero. 
-- **Local-First:** Todo controle principal é mantido no cache/localStorage. O aplicativo tenta ser o mais autônomo possível.
-- **Limites de Crescimento (Anti-Bloating):** É expressamente proibido empacotar o armazenamento de arquivos pesados (ex: Imagens ou Vídeos no Airtable). A base suporta apenas armazenamento atômico (JSON/Strings puras) para evitar gargalos de tráfego, custos e estouro do limite de Payload de JSON.
-- **Compartilhamento Efêmero (Groceries):** O acesso a listas entre múltiplos usuários é feito trocando/vinculando os "Web Links" / IDs gerados. A atualização é direcional sem necessidade de Auth.
+- **Local-First:** Todo controle principal é mantido no cache/localStorage. O aplicativo tenta ser o mais autônomo possível. Se o usuário estiver sem rede, a aplicação permite continuar a edição.
+- **Limites de Crescimento (Anti-Bloating):** É proibido empacotar o armazenamento de arquivos pesados (ex: Imagens ou Vídeos no Airtable). A base suporta apenas armazenamento atômico (JSON/Strings puras) separados em `N` tabelas distintas (Ex: Notes, Tasks). 
+- **Sincronização Nuvem e Privacidade:** As chaves de acesso a API, IDs do Banco de dados e regras jamais encostam no client-side. Elas residem e as chamadas são feitas pelo roteador serverless proxy `api/airtable`. O compartilhamento de Compras (Groceries) e o Autofill da conta (Savecode) operam sem Auth via emails.
 
 ## 3. Padrões de Código
 Abaixo constam as convenções estritas que guiarão o desenvolvimento (são as diretrizes de "Clean Code" e "Arquitetura"):
