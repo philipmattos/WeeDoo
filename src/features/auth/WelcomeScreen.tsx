@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Copy, AlertTriangle, LogIn, ArrowRight, Loader2, LaptopMinimalCheck } from 'lucide-react';
+import { Copy, AlertTriangle, LogIn, ArrowRight, Loader2, LaptopMinimalCheck, CircleAlert } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog';
 import { fetchUserDataRecord } from '../../services/airtable';
 import { useTaskStore } from '../../store/taskStore';
@@ -62,6 +62,7 @@ export const WelcomeScreen = () => {
                 if (!hasAnyData) {
                     setLoginError('Savecode não encontrado na nuvem.');
                     setIsHydrating(false);
+                    setTimeout(() => setLoginError(''), 2000);
                     return; // Bloqueia o acesso sem dados reais
                 }
 
@@ -78,6 +79,7 @@ export const WelcomeScreen = () => {
                 console.error("Hydration failed due to network error.", error);
                 setLoginError("Erro de Rede. É necessária uma conexão com a internet para buscar um Savecode.");
                 setIsHydrating(false);
+                setTimeout(() => setLoginError(''), 2000);
             }
         }
     };
@@ -114,6 +116,14 @@ export const WelcomeScreen = () => {
                     opacity: 0;
                     animation: fade-in-up-stagger 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 1.8s;
                 }
+                @keyframes shake-form {
+                    0%, 100% { transform: translate(0, 0); }
+                    10%, 30%, 50%, 70%, 90% { transform: translate(-4px, -2px); }
+                    20%, 40%, 60%, 80% { transform: translate(4px, 2px); }
+                }
+                .anim-shake {
+                    animation: shake-form 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+                }
             `}</style>
 
             <div className="text-center mb-10 z-10 flex flex-col items-center">
@@ -148,7 +158,7 @@ export const WelcomeScreen = () => {
                     <span className="bg-wd-primary dark:bg-[#04C776] px-4 text-xs font-bold text-white/70 uppercase tracking-widest z-10 relative">OU</span>
                 </div>
 
-                <form onSubmit={handleLogin} className="w-full flex flex-col gap-3 anim-content-2">
+                <form onSubmit={handleLogin} className={`w-full flex flex-col gap-3 anim-content-2 ${loginError ? 'anim-shake' : ''}`}>
                     <label className="text-sm font-semibold text-white/90 ml-2 drop-shadow-sm">Já possuo um Savecode</label>
                     <div className="flex bg-white/20 backdrop-blur-md p-1 rounded-full shadow-inner border border-white/30 focus-within:ring-2 focus-within:ring-white/50 transition-shadow">
                         <Input
@@ -168,7 +178,12 @@ export const WelcomeScreen = () => {
                             {isHydrating ? <Loader2 size={20} className="animate-spin text-wd-primary" /> : <ArrowRight size={20} strokeWidth={3} />}
                         </Button>
                     </div>
-                    {loginError && <p className="text-red-200 bg-red-900/40 p-2 rounded-xl text-xs font-bold mt-1 text-center drop-shadow-sm border border-red-500/30">{loginError}</p>}
+                    {loginError && (
+                        <div className="flex items-center gap-2 justify-center bg-[#ffe9d9] text-[#7f1d1d] p-3 rounded-2xl text-sm font-bold mt-1 shadow-lg border border-[#fca5a5]">
+                            <CircleAlert size={18} strokeWidth={2.5} />
+                            <p>{loginError}</p>
+                        </div>
+                    )}
                 </form>
             </div>
 
