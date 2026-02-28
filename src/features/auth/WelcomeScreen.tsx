@@ -154,7 +154,7 @@ export const WelcomeScreen = () => {
                     onClick={handleCreateNew}
                     className="w-full h-14 text-lg rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.15)] hover:shadow-xl hover:-translate-y-1 transition-all bg-white hover:bg-slate-50 font-bold text-wd-primary flex items-center justify-center gap-3"
                 >
-                    <UserRoundKey size={28} strokeWidth={2.5} />
+                    <UserRoundKey size={36} strokeWidth={2.5} />
                     Criar novo usuário
                 </Button>
 
