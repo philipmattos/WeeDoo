@@ -87,10 +87,15 @@ export const WelcomeScreen = () => {
     return (
         <div className="flex flex-col h-screen overflow-hidden bg-wd-primary dark:bg-[#04C776] text-white font-sans sm:max-w-md sm:mx-auto sm:shadow-2xl sm:border-x border-white/10 justify-center p-6 px-8 relative">
             <style>{`
-                @keyframes float-key {
-                    0% { transform: translateY(0px); }
-                    50% { transform: translateY(-12px); }
-                    100% { transform: translateY(0px); }
+                @keyframes float-and-spin {
+                    0% { transform: translateY(0px) rotate(0deg); }
+                    15% { transform: translateY(-12px) rotate(0deg); }
+                    30% { transform: translateY(0px) rotate(0deg); }
+                    45% { transform: translateY(-12px) rotate(0deg); }
+                    60% { transform: translateY(0px) rotate(0deg); }
+                    75% { transform: translateY(-12px) rotate(0deg); }
+                    92% { transform: translateY(0px) rotate(0deg); animation-timing-function: cubic-bezier(0.8, 0, 0.2, 1); }
+                    100% { transform: translateY(0px) rotate(720deg); }
                 }
                 @keyframes fade-in-logo {
                     0% { opacity: 0; transform: scale(0.9) translateY(20px); }
@@ -102,7 +107,7 @@ export const WelcomeScreen = () => {
                 }
                 .anim-logo {
                     opacity: 0;
-                    animation: fade-in-logo 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.8s, float-key 3.5s ease-in-out infinite 2.3s;
+                    animation: fade-in-logo 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.8s, float-and-spin 10.8s infinite 2.3s;
                 }
                 .anim-shadow {
                     opacity: 0;
