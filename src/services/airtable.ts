@@ -120,28 +120,26 @@ export async function updateListRecord(recordId: string, title: string, itemsDat
  * Puxa os dados (Download) salvos na tabela em nuvem referentes ao Savecode.
  */
 export async function fetchUserDataRecord(tableName: UserDataTableName, codeId: string): Promise<UserDataRecord | null> {
-    try {
-        const response = await fetch(INTERNAL_API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                tableName,
-                action: "GET_RECORD",
-                filterByFormula: `CodeID = '${codeId}'`
-            })
-        });
+    const response = await fetch(INTERNAL_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            tableName,
+            action: "GET_RECORD",
+            filterByFormula: `{CodeID} = '${codeId}'`
+        })
+    });
 
-        if (!response.ok) throw new Error("Backend query failed");
-
-        const data = await response.json();
-        if (data.records && data.records.length > 0) {
-            return data.records[0];
-        }
-        return null;
-    } catch (error) {
-        console.error(`Error fetching user data from ${tableName}:`, error);
-        return null;
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Airtable Error on ${tableName}: ${response.status} ${errorText}`);
     }
+
+    const data = await response.json();
+    if (data.records && data.records.length > 0) {
+        return data.records[0];
+    }
+    return null;
 }
 
 /**
