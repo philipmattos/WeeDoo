@@ -215,7 +215,7 @@ const App = () => {
             setSyncResult('error');
         } finally {
             setIsForceSyncing(false);
-            setTimeout(() => setSyncResult(null), 5000); // tempo respiro visual badge
+            setTimeout(() => setSyncResult(null), 1000); // tempo respiro visual badge
         }
     };
 
@@ -223,9 +223,9 @@ const App = () => {
         <div className="flex flex-col h-screen overflow-hidden text-slate-800 dark:text-slate-100 font-sans sm:max-w-md sm:mx-auto sm:shadow-xl sm:border-x bg-slate-50 dark:bg-slate-900">
 
             {/* Header */}
-            <header className="h-[56px] shrink-0 bg-wd-primary text-white px-4 flex items-center justify-between z-30 w-full">
-                <div className="w-8" />
-                <h1 className="text-xl font-bold tracking-wide">WeeDoo</h1>
+            <header className="h-[56px] shrink-0 bg-wd-primary text-white px-4 flex items-center justify-between z-30 w-full relative">
+                <div className="w-14" />
+                <h1 className="absolute left-1/2 -translate-x-1/2 text-xl font-bold tracking-wide">WeeDoo</h1>
                 <ThemeToggle />
             </header>
 
@@ -280,12 +280,12 @@ const App = () => {
                             </button>
 
                             {syncResult === 'success' && (
-                                <div className="flex items-center justify-center h-10 px-3 bg-wd-primary text-white rounded-full animate-in fade-in slide-in-from-left-4 duration-300">
+                                <div className="ml-auto flex items-center justify-center h-10 px-3 bg-wd-primary text-white rounded-full animate-in fade-in slide-in-from-right-4 duration-300">
                                     <CloudCheck size={18} />
                                 </div>
                             )}
                             {syncResult === 'error' && (
-                                <div className="flex items-center justify-center h-10 px-3 bg-red-500 text-white rounded-full animate-in fade-in slide-in-from-left-4 duration-300">
+                                <div className="ml-auto flex items-center justify-center h-10 px-3 bg-red-500 text-white rounded-full animate-in fade-in slide-in-from-right-4 duration-300">
                                     <XCircle size={18} />
                                 </div>
                             )}
