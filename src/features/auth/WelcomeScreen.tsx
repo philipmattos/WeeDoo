@@ -2,8 +2,14 @@ import React, { useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Copy, AlertTriangle, KeyRound, LogIn, ArrowRight } from 'lucide-react';
+import { Copy, AlertTriangle, KeyRound, LogIn, ArrowRight, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog';
+import { fetchUserDataRecord } from '../../services/airtable';
+import { useTaskStore } from '../../store/taskStore';
+import { useKanbanStore } from '../../store/kanbanStore';
+import { useNotesStore } from '../../store/notesStore';
+import { useCalendarStore } from '../../store/calendarStore';
+import { useThemeStore } from '../../store/themeStore';
 
 export const WelcomeScreen = () => {
     const { loginWithCode, generateSaveCode } = useAuthStore();
@@ -13,6 +19,7 @@ export const WelcomeScreen = () => {
     const [generatedCode, setGeneratedCode] = useState('');
     const [copied, setCopied] = useState(false);
     const [hasCopiedOnce, setHasCopiedOnce] = useState(false);
+    const [isHydrating, setIsHydrating] = useState(false);
 
     const handleCreateNew = () => {
         const newCode = generateSaveCode();
@@ -33,10 +40,34 @@ export const WelcomeScreen = () => {
         loginWithCode(generatedCode);
     };
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (codeInput.trim().length > 4) {
-            loginWithCode(codeInput.trim());
+        const code = codeInput.trim();
+        if (code.length > 4) {
+            setIsHydrating(true);
+            try {
+                // Tenta puxar dados das 5 tabelas simultaneamente
+                const [tasksRes, kanbanRes, notesRes, calRes, configRes] = await Promise.all([
+                    fetchUserDataRecord('UsersData_Tasks', code),
+                    fetchUserDataRecord('UsersData_Kanban', code),
+                    fetchUserDataRecord('UsersData_Notes', code),
+                    fetchUserDataRecord('UsersData_Calendar', code),
+                    fetchUserDataRecord('UsersData_Config', code),
+                ]);
+
+                // Hidrata as "mentes" do Zustand se os registros existirem na nuvem
+                if (tasksRes) useTaskStore.setState(JSON.parse(tasksRes.fields.Data));
+                if (kanbanRes) useKanbanStore.setState(JSON.parse(kanbanRes.fields.Data));
+                if (notesRes) useNotesStore.setState(JSON.parse(notesRes.fields.Data));
+                if (calRes) useCalendarStore.setState(JSON.parse(calRes.fields.Data));
+                if (configRes) useThemeStore.setState(JSON.parse(configRes.fields.Data));
+
+            } catch (error) {
+                console.warn("Hydration failed or offline. Logging in with local cache.", error);
+            } finally {
+                setIsHydrating(false);
+                loginWithCode(code); // Libera o acesso para o Dashboard
+            }
         }
     };
 
@@ -119,11 +150,11 @@ export const WelcomeScreen = () => {
                         />
                         <Button
                             type="submit"
-                            disabled={codeInput.trim().length < 5}
+                            disabled={codeInput.trim().length < 5 || isHydrating}
                             size="icon"
-                            className="w-12 h-12 shrink-0 rounded-full bg-white text-wd-primary hover:bg-slate-100 disabled:opacity-50 disabled:bg-white/50 transition-colors shadow-md"
+                            className="w-12 h-12 shrink-0 rounded-full bg-white text-wd-primary hover:bg-slate-100 disabled:opacity-50 disabled:bg-white/50 transition-colors shadow-md flex items-center justify-center"
                         >
-                            <ArrowRight size={20} strokeWidth={3} />
+                            {isHydrating ? <Loader2 size={20} className="animate-spin text-wd-primary" /> : <ArrowRight size={20} strokeWidth={3} />}
                         </Button>
                     </div>
                 </form>
