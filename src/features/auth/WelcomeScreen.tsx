@@ -20,6 +20,7 @@ export const WelcomeScreen = () => {
     const [copied, setCopied] = useState(false);
     const [hasCopiedOnce, setHasCopiedOnce] = useState(false);
     const [isHydrating, setIsHydrating] = useState(false);
+    const [loginError, setLoginError] = useState('');
 
     const handleCreateNew = () => {
         const newCode = generateSaveCode();
@@ -43,6 +44,7 @@ export const WelcomeScreen = () => {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         const code = codeInput.trim();
+        setLoginError('');
         if (code.length > 4) {
             setIsHydrating(true);
             try {
@@ -55,6 +57,14 @@ export const WelcomeScreen = () => {
                     fetchUserDataRecord('UsersData_Config', code),
                 ]);
 
+                const hasAnyData = tasksRes || kanbanRes || notesRes || calRes || configRes;
+
+                if (!hasAnyData) {
+                    setLoginError('Savecode não encontrado na nuvem.');
+                    setIsHydrating(false);
+                    return; // Bloqueia o acesso sem dados reais
+                }
+
                 // Hidrata as "mentes" do Zustand se os registros existirem na nuvem
                 if (tasksRes) useTaskStore.setState(JSON.parse(tasksRes.fields.Data));
                 if (kanbanRes) useKanbanStore.setState(JSON.parse(kanbanRes.fields.Data));
@@ -62,11 +72,12 @@ export const WelcomeScreen = () => {
                 if (calRes) useCalendarStore.setState(JSON.parse(calRes.fields.Data));
                 if (configRes) useThemeStore.setState(JSON.parse(configRes.fields.Data));
 
-            } catch (error) {
-                console.warn("Hydration failed or offline. Logging in with local cache.", error);
-            } finally {
                 setIsHydrating(false);
                 loginWithCode(code); // Libera o acesso para o Dashboard
+            } catch (error) {
+                console.warn("Hydration failed or offline. Logging in with local cache.", error);
+                setIsHydrating(false);
+                loginWithCode(code);
             }
         }
     };
@@ -157,6 +168,7 @@ export const WelcomeScreen = () => {
                             {isHydrating ? <Loader2 size={20} className="animate-spin text-wd-primary" /> : <ArrowRight size={20} strokeWidth={3} />}
                         </Button>
                     </div>
+                    {loginError && <p className="text-red-200 bg-red-900/40 p-2 rounded-xl text-xs font-bold mt-1 text-center drop-shadow-sm border border-red-500/30">{loginError}</p>}
                 </form>
             </div>
 
