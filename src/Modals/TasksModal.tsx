@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ptBR } from "date-fns/locale";
 import { format } from "date-fns";
 
@@ -71,7 +71,7 @@ const DatePicker = ({ taskId, dueDate, onSave }: DatePickerProps) => {
                     size="icon"
                     title="Adicionar data e hora"
                     className={`w-8 h-8 rounded-lg transition-colors ${dueDate
-                        ? 'bg-[#3bbfa0]/15 text-[#3bbfa0] hover:bg-[#3bbfa0]/25'
+                        ? 'bg-wd-primary/15 text-wd-primary hover:bg-wd-primary/25'
                         : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-blue-50 hover:text-blue-500'
                         }`}
                 >
@@ -110,11 +110,11 @@ const DatePicker = ({ taskId, dueDate, onSave }: DatePickerProps) => {
                     <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                         Hora (opcional)
                     </label>
-                    <input
+                    <Input
                         type="time"
                         value={timeStr}
                         onChange={(e) => setTimeStr(e.target.value)}
-                        className="w-full h-9 rounded-xl border border-slate-200 dark:border-slate-600 px-3 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:border-[#3bbfa0] focus:ring-1 focus:ring-[#3bbfa0]"
+                        className="w-full h-9 rounded-xl border-slate-200 dark:border-slate-600 text-sm text-slate-700 dark:text-slate-200 focus-visible:ring-wd-primary"
                     />
                     <div className="flex gap-2 mt-1">
                         {dueDate && (
@@ -132,7 +132,7 @@ const DatePicker = ({ taskId, dueDate, onSave }: DatePickerProps) => {
                             type="button"
                             size="sm"
                             onClick={handleApply}
-                            className="flex-1 rounded-full bg-[#3bbfa0] hover:bg-[#2fa085] text-white text-xs h-8"
+                            className="flex-1 rounded-full bg-wd-primary hover:bg-wd-primary-dark text-white text-xs h-8"
                         >
                             {selectedDate ? 'Confirmar' : 'Fechar'}
                         </Button>
@@ -229,12 +229,12 @@ export const TasksModal = () => {
                                 required
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                className="flex-1 h-11 rounded-full px-4 text-sm focus-visible:ring-[#3bbfa0]"
+                                className="flex-1 h-11 rounded-full px-4 text-sm focus-visible:ring-wd-primary"
                             />
                             <Button
                                 type="submit"
                                 size="icon"
-                                className="h-11 w-11 bg-[#e2f5f1] text-[#3bbfa0] rounded-full hover:bg-[#d0efe8] hover:scale-105 transition-transform shrink-0"
+                                className="h-11 w-11 bg-wd-primary-soft text-wd-primary rounded-full hover:bg-[#d0efe8] hover:scale-105 transition-transform shrink-0"
                             >
                                 <Plus size={24} />
                             </Button>
@@ -243,7 +243,7 @@ export const TasksModal = () => {
                             <select
                                 value={priority}
                                 onChange={(e) => setPriority(e.target.value as TaskPriority)}
-                                className="h-11 border border-input rounded-full px-3 text-sm focus:outline-none focus:ring-1 focus:ring-[#3bbfa0] min-w-[100px] bg-background appearance-none"
+                                className="h-11 border border-input rounded-full px-3 text-sm focus:outline-none focus:ring-1 focus:ring-wd-primary min-w-[100px] bg-background appearance-none"
                             >
                                 <option value="baixa">🟢 Baixa</option>
                                 <option value="media">🟠 Média</option>
@@ -255,7 +255,7 @@ export const TasksModal = () => {
                                 value={category}
                                 onChange={(e) => setCategory(e.target.value)}
                                 list="category-suggestions"
-                                className="flex-1 h-11 rounded-full px-4 text-sm focus-visible:ring-[#3bbfa0]"
+                                className="flex-1 h-11 rounded-full px-4 text-sm focus-visible:ring-wd-primary"
                             />
                             <datalist id="category-suggestions">
                                 {categories.map(cat => <option key={cat} value={cat} />)}
@@ -273,8 +273,8 @@ export const TasksModal = () => {
                                 variant="outline"
                                 onClick={() => setCurrentFilter(filter)}
                                 className={`px-4 py-1.5 h-8 rounded-full text-[13px] font-medium whitespace-nowrap transition-colors border ${currentFilter === filter
-                                    ? 'bg-[#e2f5f1] text-[#0c2f37] border-[#3bbfa0] hover:bg-[#d0efe8]'
-                                    : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600 hover:border-[#3bbfa0] hover:bg-slate-50 dark:hover:bg-slate-700'
+                                    ? 'bg-wd-primary-soft text-[#0c2f37] border-wd-primary hover:bg-[#d0efe8]'
+                                    : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600 hover:border-wd-primary hover:bg-slate-50 dark:hover:bg-slate-700'
                                     }`}
                             >
                                 {filter.charAt(0).toUpperCase() + filter.slice(1).replace('idos', 'ídos')}
@@ -319,7 +319,7 @@ export const TasksModal = () => {
                                         <Checkbox
                                             checked={task.completed}
                                             onCheckedChange={() => toggleTaskCompletion(task.id)}
-                                            className="mt-0.5 shrink-0 w-6 h-6 rounded-md border-2 transition-colors data-[state=checked]:bg-[#3bbfa0] data-[state=checked]:border-[#3bbfa0] data-[state=unchecked]:border-slate-300 hover:border-[#3bbfa0]"
+                                            className="mt-0.5 shrink-0 w-6 h-6 rounded-md border-2 transition-colors data-[state=checked]:bg-wd-primary data-[state=checked]:border-wd-primary data-[state=unchecked]:border-slate-300 hover:border-wd-primary"
                                         />
 
                                         {/* Title */}
@@ -332,7 +332,7 @@ export const TasksModal = () => {
                                                     onChange={(e) => setEditTitle(e.target.value)}
                                                     onBlur={saveEdit}
                                                     onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
-                                                    className="w-full text-base font-medium text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-slate-900 px-2 py-0.5 rounded outline-none border border-slate-200 dark:border-slate-600 inline-block focus:border-[#3bbfa0]"
+                                                    className="w-full text-base font-medium text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-slate-900 px-2 py-0.5 rounded outline-none border border-slate-200 dark:border-slate-600 inline-block focus:border-wd-primary"
                                                 />
                                             ) : (
                                                 <h4
@@ -345,7 +345,7 @@ export const TasksModal = () => {
 
                                             {/* Due Date display */}
                                             {task.dueDate && (
-                                                <p className="text-xs text-[#3bbfa0] font-semibold mt-1 flex items-center gap-1">
+                                                <p className="text-xs text-wd-primary font-semibold mt-1 flex items-center gap-1">
                                                     <Calendar1 size={11} />
                                                     {formatDueDate(task.dueDate)}
                                                 </p>

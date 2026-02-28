@@ -3,16 +3,16 @@ import { BaseModal } from './BaseModal';
 import { useNotesStore } from '../store/notesStore';
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2, ArrowLeft, Bold, Italic, Underline as UnderlineIcon, List, ListOrdered, ChevronDown, Save } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
-import { useEditor, EditorContent } from '@tiptap/react';
+import { useEditor, EditorContent, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 
 import type { Note } from '../types/notes';
 
 // ─── BUG FIX: MenuBar subscribes to editor transactions for accurate isActive state ───
-const MenuBar = ({ editor }: { editor: any }) => {
+const MenuBar = ({ editor }: { editor: Editor | null }) => {
     const [sizeOpen, setSizeOpen] = useState(false);
     const dropRef = useRef<HTMLDivElement>(null);
     // Force re-render on every editor transaction so isActive() is always fresh
@@ -68,8 +68,8 @@ const MenuBar = ({ editor }: { editor: any }) => {
         { label: 'Título 4', action: () => editor.chain().focus().setHeading({ level: 4 }).run(), isActive: isH4 },
     ];
 
-    const activeBtn = 'bg-[#3bbfa0]/15 text-[#3bbfa0] font-extrabold ring-1 ring-[#3bbfa0]/40';
-    const inactiveBtn = 'text-slate-500 dark:text-slate-400 hover:text-[#3bbfa0] hover:bg-slate-100 dark:hover:bg-slate-600';
+    const activeBtn = 'bg-wd-primary/15 text-wd-primary font-extrabold ring-1 ring-wd-primary/40';
+    const inactiveBtn = 'text-slate-500 dark:text-slate-400 hover:text-wd-primary hover:bg-slate-100 dark:hover:bg-slate-600';
 
     return (
         <div className="flex flex-wrap items-center gap-1 p-2 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-600 rounded-t-2xl">
@@ -79,7 +79,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                     type="button"
                     onClick={() => setSizeOpen(v => !v)}
                     className={`flex items-center gap-1 px-3 h-8 rounded-full text-sm font-semibold transition-all border ${isHeading
-                        ? 'bg-[#3bbfa0]/15 text-[#3bbfa0] border-[#3bbfa0]/30 ring-1 ring-[#3bbfa0]/30'
+                        ? 'bg-wd-primary/15 text-wd-primary border-wd-primary/30 ring-1 ring-wd-primary/30'
                         : 'text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600'
                         }`}
                 >
@@ -94,7 +94,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                                 type="button"
                                 onClick={() => { opt.action(); setSizeOpen(false); }}
                                 className={`w-full text-left px-4 py-2 transition-colors ${opt.isActive
-                                    ? 'bg-[#3bbfa0]/10 text-[#3bbfa0]'
+                                    ? 'bg-wd-primary/10 text-wd-primary'
                                     : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700'
                                     }`}
                             >
@@ -164,6 +164,20 @@ function extractTitle(html: string): string {
     return text.length > 50 ? text.substring(0, 50) + '...' : text;
 }
 
+// ─── Tiptap Extensions ───
+const editorExtensions = [
+    StarterKit.configure({
+        // Disable all markdown input rules (no auto-formatting on typing)
+        bold: { HTMLAttributes: {} },
+        italic: { HTMLAttributes: {} },
+        heading: {
+            levels: [1, 2, 3, 4],
+            HTMLAttributes: {},
+        },
+    }),
+    Underline,
+];
+
 export const NotesModal = () => {
     const { notes, addNote, updateNote, deleteNote } = useNotesStore();
 
@@ -176,18 +190,7 @@ export const NotesModal = () => {
     activeNoteRef.current = activeNote;
 
     const editor = useEditor({
-        extensions: [
-            StarterKit.configure({
-                // Disable all markdown input rules (no auto-formatting on typing)
-                bold: { HTMLAttributes: {} },
-                italic: { HTMLAttributes: {} },
-                heading: {
-                    levels: [1, 2, 3, 4],
-                    HTMLAttributes: {},
-                },
-            }),
-            Underline,
-        ],
+        extensions: editorExtensions,
         enableInputRules: false,   // disables all markdown shortcuts like *text*, **text**, # heading
         enablePasteRules: false,   // also disables paste auto-formatting
         content: '',
@@ -252,7 +255,7 @@ export const NotesModal = () => {
                 <div className="flex flex-col h-full animate-in fade-in duration-300 pt-2 pb-24 gap-4">
                     <Button
                         onClick={handleCreateNote}
-                        className="w-full rounded-full bg-[#3bbfa0] text-white hover:bg-[#2fa085] h-10 font-bold text-sm shadow-sm transition-transform hover:scale-[1.02] flex items-center justify-center gap-2"
+                        className="w-full rounded-full bg-wd-primary text-white hover:bg-wd-primary-dark h-10 font-bold text-sm shadow-sm transition-transform hover:scale-[1.02] flex items-center justify-center gap-2"
                     >
                         <Plus size={22} />
                         Adicionar notas
@@ -269,7 +272,7 @@ export const NotesModal = () => {
                                 <div
                                     key={note.id}
                                     onClick={() => handleOpenNote(note)}
-                                    className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm rounded-2xl p-4 flex items-center justify-between group hover:border-[#3bbfa0]/40 transition-colors cursor-pointer"
+                                    className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm rounded-2xl p-4 flex items-center justify-between group hover:border-wd-primary/40 transition-colors cursor-pointer"
                                 >
                                     <div className="flex-1 min-w-0 pr-4">
                                         <h3 className="font-bold text-slate-800 dark:text-slate-100 truncate">{note.title || 'Sem título'}</h3>
@@ -322,7 +325,7 @@ export const NotesModal = () => {
                             <Button
                                 type="button"
                                 onClick={handleBackToList}
-                                className="w-full rounded-full h-12 bg-[#3bbfa0] hover:bg-[#2fa085] text-white font-bold flex items-center justify-center gap-2 shadow-sm transition-transform hover:scale-[1.01]"
+                                className="w-full rounded-full h-12 bg-wd-primary hover:bg-wd-primary-dark text-white font-bold flex items-center justify-center gap-2 shadow-sm transition-transform hover:scale-[1.01]"
                             >
                                 <Save size={18} />
                                 Salvar e Fechar
@@ -341,7 +344,7 @@ export const NotesModal = () => {
                     <div className="py-4">
                         <p className="text-slate-600 dark:text-slate-300">Tem certeza que deseja apagar essa nota? Essa ação não pode ser desfeita.</p>
                     </div>
-                    <DialogFooter className="flex gap-2 sm:justify-end mt-2">
+                    <div className="flex gap-2 justify-end mt-2">
                         <Button
                             type="button"
                             variant="outline"
@@ -360,7 +363,7 @@ export const NotesModal = () => {
                         >
                             Excluir Nota
                         </Button>
-                    </DialogFooter>
+                    </div>
                 </DialogContent>
             </Dialog>
 

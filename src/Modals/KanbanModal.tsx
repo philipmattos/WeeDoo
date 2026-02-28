@@ -2,16 +2,16 @@
 import { BaseModal } from './BaseModal';
 import { useKanbanStore } from '../store/kanbanStore';
 import { type Id, type KanbanColumn, type KanbanTask } from '../types/kanban';
-import { Plus, Trash2, GripVertical } from 'lucide-react';
+import { Plus, Trash2, GripVertical, ChevronLeft } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogFooter,
 } from "@/components/ui/dialog";
 
 import {
@@ -182,12 +182,12 @@ export const KanbanModal = () => {
                         placeholder="Nome da nova coluna..."
                         value={newColumnTitle}
                         onChange={(e) => setNewColumnTitle(e.target.value)}
-                        className="flex-1 h-12 rounded-full px-5 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 focus-visible:ring-[#3bbfa0]"
+                        className="flex-1 h-12 rounded-full px-5 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 focus-visible:ring-wd-primary"
                     />
                     <Button
                         type="submit"
                         size="icon"
-                        className="h-12 w-12 bg-[#3bbfa0] hover:bg-[#2fa085] text-white rounded-full transition-transform hover:scale-105 shrink-0 shadow-sm"
+                        className="h-12 w-12 bg-wd-primary hover:bg-wd-primary-dark text-white rounded-full transition-transform hover:scale-105 shrink-0 shadow-sm"
                     >
                         <Plus size={24} />
                     </Button>
@@ -288,7 +288,7 @@ function ColumnContainer({ column, columns, deleteColumn, tasks, addTask, delete
             <div
                 ref={setNodeRef}
                 style={style}
-                className="opacity-40 border-2 border-[#3bbfa0] border-dashed shrink-0 snap-center w-[75vw] max-w-[288px] h-full max-h-[70vh] rounded-3xl flex flex-col"
+                className="opacity-40 border-2 border-wd-primary border-dashed shrink-0 snap-center w-[75vw] max-w-[288px] h-full max-h-[70vh] rounded-3xl flex flex-col"
             ></div>
         );
     }
@@ -353,12 +353,12 @@ function ColumnContainer({ column, columns, deleteColumn, tasks, addTask, delete
                         placeholder="Adicionar card..."
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
-                        className="h-10 text-sm border-slate-200 dark:border-slate-600 rounded-xl focus-visible:ring-[#3bbfa0] bg-white dark:bg-slate-800"
+                        className="h-10 text-sm border-slate-200 dark:border-slate-600 rounded-xl focus-visible:ring-wd-primary bg-white dark:bg-slate-800"
                     />
                     <Button
                         type="submit"
                         size="icon"
-                        className="h-10 w-10 shrink-0 bg-[#e2f5f1] text-[#3bbfa0] hover:bg-[#d0efe8] rounded-xl hover:scale-105 transition-transform"
+                        className="h-10 w-10 shrink-0 bg-wd-primary-soft text-wd-primary hover:bg-[#d0efe8] rounded-xl hover:scale-105 transition-transform"
                     >
                         <Plus size={20} />
                     </Button>
@@ -423,7 +423,7 @@ function TaskCard({ task, columns, deleteTask, updateTask }: TaskCardProps) {
             <div
                 ref={setNodeRef}
                 style={style}
-                className="opacity-40 bg-white dark:bg-slate-800 border-2 border-[#3bbfa0] border-dashed rounded-2xl h-[80px] cursor-grabbing"
+                className="opacity-40 bg-white dark:bg-slate-800 border-2 border-wd-primary border-dashed rounded-2xl h-[80px] cursor-grabbing"
             />
         );
     }
@@ -454,7 +454,7 @@ function TaskCard({ task, columns, deleteTask, updateTask }: TaskCardProps) {
                 {...attributes}
                 {...listeners}
                 onClick={() => setIsDetailsOpen(true)}
-                className="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center group hover:shadow-md transition-shadow cursor-pointer active:cursor-grabbing hover:border-[#3bbfa0]/30"
+                className="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center group hover:shadow-md transition-shadow cursor-pointer active:cursor-grabbing hover:border-wd-primary/30"
             >
                 {/* Color Badge */}
                 {currentBadgeColor !== 'bg-slate-200' && (
@@ -467,9 +467,18 @@ function TaskCard({ task, columns, deleteTask, updateTask }: TaskCardProps) {
                     </p>
                 </div>
             </div>
-            <DialogContent className="sm:max-w-md rounded-3xl bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 p-6 shadow-xl w-[90vw] overflow-y-auto max-h-[90vh]">
-                <DialogHeader className="mb-2 text-left">
-                    <DialogTitle className="text-xl font-bold text-slate-800 dark:text-slate-100">Detalhes do Card</DialogTitle>
+            <DialogContent className="sm:max-w-md rounded-3xl bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 p-6 shadow-xl w-[90vw] overflow-y-auto max-h-[90vh] [&>button:last-child]:hidden">
+                <DialogHeader className="mb-2">
+                    <div className="flex items-center justify-between">
+                        <button
+                            onClick={() => { handleSaveText(); setIsDetailsOpen(false); }}
+                            className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 transition-colors font-medium bg-slate-100 dark:bg-slate-700 px-3 py-1.5 rounded-full text-sm"
+                        >
+                            <ChevronLeft size={16} />
+                            Voltar
+                        </button>
+                        <DialogTitle className="text-xl font-bold text-slate-800 dark:text-slate-100">Detalhes do Card</DialogTitle>
+                    </div>
                 </DialogHeader>
 
                 <div className="flex flex-col gap-6 py-2">
@@ -484,7 +493,7 @@ function TaskCard({ task, columns, deleteTask, updateTask }: TaskCardProps) {
                                     handleSaveText();
                                     setIsEditTitle(false);
                                 }}
-                                className="w-full text-lg bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-600 rounded-xl px-4 h-12 outline-none focus-visible:ring-1 focus-visible:ring-[#3bbfa0] text-slate-800 dark:text-slate-100 font-bold"
+                                className="w-full text-lg bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-600 rounded-xl px-4 h-12 outline-none focus-visible:ring-1 focus-visible:ring-wd-primary text-slate-800 dark:text-slate-100 font-bold"
                                 placeholder="Título da tarefa"
                             />
                         ) : (
@@ -499,13 +508,13 @@ function TaskCard({ task, columns, deleteTask, updateTask }: TaskCardProps) {
 
                     <div className="flex flex-col gap-1">
                         <label className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Comentários / Descrição</label>
-                        <textarea
+                        <Textarea
                             value={editDescription}
                             onChange={(e) => setEditDescription(e.target.value)}
                             onBlur={handleSaveText}
-                            className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 min-h-[100px] outline-none focus:border-[#3bbfa0] focus:ring-1 focus:ring-[#3bbfa0] resize-y text-base text-slate-700 dark:text-slate-200 leading-relaxed font-medium"
+                            className="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 min-h-[100px] focus-visible:ring-1 focus-visible:ring-wd-primary resize-y text-base text-slate-700 dark:text-slate-200 leading-relaxed font-medium"
                             placeholder="Adicione mais detalhes..."
-                        ></textarea>
+                        />
                     </div>
 
                     <div className="flex flex-col gap-1">
@@ -551,7 +560,7 @@ function TaskCard({ task, columns, deleteTask, updateTask }: TaskCardProps) {
                                     size="sm"
                                     onClick={() => handleMoveColumn(col.id)}
                                     disabled={col.id === task.columnId}
-                                    className={`rounded-full px-4 h-9 ${col.id === task.columnId ? 'bg-[#3bbfa0] text-white hover:bg-[#3bbfa0]' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:border-[#3bbfa0] hover:text-[#3bbfa0]'}`}
+                                    className={`rounded-full px-4 h-9 ${col.id === task.columnId ? 'bg-wd-primary text-white hover:bg-wd-primary' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:border-wd-primary hover:text-wd-primary'}`}
                                 >
                                     {col.title}
                                 </Button>

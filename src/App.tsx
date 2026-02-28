@@ -6,6 +6,7 @@ import { useTaskStore } from './store/taskStore';
 import { useKanbanStore } from './store/kanbanStore';
 import { useNotesStore } from './store/notesStore';
 import { useGroceryStore } from './store/groceryStore';
+import { useCalendarStore } from './store/calendarStore';
 import {
     Sun, Moon, User, FileText, Home, CheckSquare,
     Columns, ShoppingCart, AlertCircle, Calendar1,
@@ -26,12 +27,15 @@ const ThemeToggle = () => {
         <button
             onClick={toggle}
             title={isDark ? 'Modo claro' : 'Modo escuro'}
-            className="relative flex items-center w-[52px] h-[28px] rounded-full bg-white/20 hover:bg-white/30 transition-colors cursor-pointer shrink-0 overflow-hidden"
-            style={{ overflow: 'hidden' }}
+            className="relative flex items-center w-[52px] h-[28px] rounded-full transition-colors cursor-pointer shrink-0 overflow-hidden"
+            style={{
+                backgroundColor: isDark ? '#04C776' : '#09ED91',
+                overflow: 'hidden',
+            }}
         >
-            {/* Static background icons */}
-            <Sun size={12} className="absolute left-[7px]  top-1/2 -translate-y-1/2 text-white/50 pointer-events-none z-0" />
-            <Moon size={12} className="absolute right-[7px] top-1/2 -translate-y-1/2 text-white/50 pointer-events-none z-0" />
+            {/* Background icons — white, visible, above background */}
+            <Sun size={16} className="absolute left-[6px]  top-1/2 -translate-y-1/2 text-white pointer-events-none z-[1]" />
+            <Moon size={16} className="absolute right-[6px] top-1/2 -translate-y-1/2 text-white pointer-events-none z-[1]" />
 
             {/* Sliding white thumb — overflow hidden clips the rising icon */}
             <span
@@ -44,7 +48,7 @@ const ThemeToggle = () => {
                 <span key={iconKey} className="wd-rise flex items-center justify-center">
                     {isDark
                         ? <Moon size={12} className="text-slate-600" />
-                        : <Sun size={12} className="text-amber-400" />
+                        : <Sun size={12} className="text-[#F0BC00]" />
                     }
                 </span>
             </span>
@@ -61,7 +65,7 @@ const NavButton = ({
     return (
         <button
             onClick={onClick}
-            className={`flex flex-col items-center gap-1 cursor-pointer transition-colors ${active ? 'text-[#3bbfa0]' : 'text-slate-400 dark:text-slate-500'
+            className={`flex flex-col items-center gap-1 cursor-pointer transition-colors ${active ? 'text-wd-primary' : 'text-slate-400 dark:text-slate-500'
                 }`}
         >
             {/* key on active triggers remount => wd-nav-pop plays */}
@@ -100,19 +104,53 @@ const App = () => {
     const tasks = useTaskStore(s => s.tasks);
     const kanbanTasks = useKanbanStore(s => s.tasks);
     const notes = useNotesStore(s => s.notes);
-    const groceries = useGroceryStore(s => s.items);
+    const groceryLists = useGroceryStore(s => s.lists);
 
     const pendingTasks = tasks.filter(t => !t.completed).length;
     const highPriorityTasks = tasks.filter(t => t.priority === 'alta' && !t.completed).length;
     const kanbanTotal = kanbanTasks.length;
     const kanbanDone = kanbanTasks.filter(t => t.columnId === 'done' || t.columnId === 'concluido').length;
     const notesCount = notes.length;
-    const groceryPending = groceries.filter(g => !g.checked).length;
 
-    const upcomingTasks = tasks
-        .filter(t => !t.completed && t.dueDate)
-        .sort((a, b) => new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime())
-        .slice(0, 3);
+    // Sum unchecked items across all lists
+    const groceryPending = groceryLists.reduce((acc, list) => {
+        return acc + list.items.filter(g => !g.checked).length;
+    }, 0);
+
+    const calendarEvents = useCalendarStore(s => s.events);
+
+    // Combined upcoming items: tasks with dueDate + calendar events, sorted by date
+    const now = new Date();
+    const upcomingItems = [
+        // Tasks with future/overdue due dates
+        ...tasks
+            .filter(t => !t.completed && t.dueDate)
+            .map(t => ({
+                id: t.id,
+                title: t.title,
+                date: new Date(t.dueDate!),
+                dateStr: t.dueDate!,
+                time: t.dueDate!.includes('T') ? t.dueDate!.substring(11, 16) : undefined,
+                type: 'task' as const,
+                priority: t.priority,
+                color: '',
+            })),
+        // Calendar events from today onwards
+        ...calendarEvents
+            .filter(e => e.date >= format(now, 'yyyy-MM-dd'))
+            .map(e => ({
+                id: e.id,
+                title: e.title,
+                date: new Date(`${e.date}T${e.time ?? '00:00'}`),
+                dateStr: e.date,
+                time: e.time,
+                type: 'event' as const,
+                priority: undefined,
+                color: e.color,
+            })),
+    ]
+        .sort((a, b) => a.date.getTime() - b.date.getTime())
+        .slice(0, 4);
 
     const today = format(new Date(), "EEEE, d 'de' MMMM", { locale: ptBR });
 
@@ -122,13 +160,14 @@ const App = () => {
         { id: 'groceries', icon: ShoppingCart, label: 'Lista', onClick: () => openModal('groceries') },
         { id: 'kanban', icon: Columns, label: 'Kanban', onClick: () => openModal('kanban') },
         { id: 'notes', icon: FileText, label: 'Notas', onClick: () => openModal('notes') },
+        { id: 'calendar', icon: Calendar1, label: 'Agenda', onClick: () => openModal('calendar') },
     ] as const;
 
     return (
         <div className="flex flex-col h-screen overflow-hidden text-slate-800 dark:text-slate-100 font-sans sm:max-w-md sm:mx-auto sm:shadow-xl sm:border-x bg-slate-50 dark:bg-slate-900">
 
             {/* Header */}
-            <header className="h-[56px] shrink-0 bg-[#3bbfa0] text-white px-4 flex items-center justify-between z-30 w-full">
+            <header className="h-[56px] shrink-0 bg-wd-primary text-white px-4 flex items-center justify-between z-30 w-full">
                 <div className="w-8" />
                 <h1 className="text-xl font-bold tracking-wide">WeeDoo</h1>
                 <ThemeToggle />
@@ -140,7 +179,7 @@ const App = () => {
 
                     {/* Profile Card */}
                     <div className="wd-card-in bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm flex items-center gap-4 border border-slate-100 dark:border-slate-700">
-                        <div className="bg-[#e2f5f1] dark:bg-teal-900/50 w-14 h-14 rounded-full flex items-center justify-center text-[#21434b] dark:text-teal-300 shrink-0">
+                        <div className="bg-wd-primary-soft dark:bg-wd-primary-soft w-14 h-14 rounded-full flex items-center justify-center text-[#21434b] dark:text-wd-primary shrink-0">
                             <User size={28} />
                         </div>
                         <div className="min-w-0">
@@ -148,7 +187,7 @@ const App = () => {
                                 type="text"
                                 value={userName}
                                 onChange={handleNameChange}
-                                className="text-lg font-bold text-[#0c2f37] dark:text-slate-100 bg-transparent border-none outline-none focus:ring-2 focus:ring-[#3bbfa0]/20 rounded px-1 -ml-1 w-full max-w-[200px]"
+                                className="text-lg font-bold text-[#0c2f37] dark:text-slate-100 bg-transparent border-none outline-none focus:ring-2 focus:ring-wd-primary/20 rounded px-1 -ml-1 w-full max-w-[200px]"
                                 placeholder="Seu Nome"
                             />
                             <p className="text-sm text-slate-400 dark:text-slate-500 capitalize">{today}</p>
@@ -162,7 +201,7 @@ const App = () => {
                             className="wd-card-in bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 p-4 rounded-3xl shadow-sm flex flex-col items-center gap-2 hover:scale-[1.02] active:scale-[0.96] transition-transform cursor-pointer"
                             style={{ animationDelay: '0.05s' }}>
                             <div className="flex items-center gap-3">
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${highPriorityTasks > 0 ? 'bg-red-50 dark:bg-red-900/30 text-red-400' : 'bg-[#e2f5f1] dark:bg-teal-900/40 text-[#3bbfa0]'}`}>
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${highPriorityTasks > 0 ? 'bg-red-50 dark:bg-red-900/30 text-red-400' : 'bg-wd-primary-soft dark:bg-wd-primary-soft text-wd-primary'}`}>
                                     <AlertCircle size={20} />
                                 </div>
                                 <span className="text-[30px] font-bold text-[#0c2f37] dark:text-slate-100 leading-none">{pendingTasks}</span>
@@ -176,7 +215,7 @@ const App = () => {
                             className="wd-card-in bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 p-4 rounded-3xl shadow-sm flex flex-col items-center gap-2 hover:scale-[1.02] active:scale-[0.96] transition-transform cursor-pointer"
                             style={{ animationDelay: '0.1s' }}>
                             <div className="flex items-center gap-3">
-                                <div className="bg-[#e2f5f1] dark:bg-teal-900/40 text-[#3bbfa0] w-10 h-10 rounded-xl flex items-center justify-center shrink-0">
+                                <div className="bg-wd-primary-soft dark:bg-wd-primary-soft text-wd-primary w-10 h-10 rounded-xl flex items-center justify-center shrink-0">
                                     <Columns size={20} />
                                 </div>
                                 <span className="text-[30px] font-bold text-[#0c2f37] dark:text-slate-100 leading-none">{kanbanTotal}</span>
@@ -211,35 +250,50 @@ const App = () => {
                         </button>
                     </div>
 
-                    {/* Upcoming due dates */}
-                    {upcomingTasks.length > 0 && (
+                    {/* Upcoming: tasks + calendar events */}
+                    {upcomingItems.length > 0 && (
                         <div className="wd-card-in bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-3xl shadow-sm p-5" style={{ animationDelay: '0.25s' }}>
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-[#0c2f37] dark:text-slate-100 font-bold text-base flex items-center gap-2">
-                                    <Calendar1 size={18} className="text-[#3bbfa0]" />
+                                    <Calendar1 size={18} className="text-wd-primary" />
                                     Pr&oacute;ximas datas
                                 </h3>
-                                <button onClick={() => openModal('tasks')}
-                                    className="text-[#3bbfa0] text-xs font-semibold flex items-center gap-1 hover:opacity-70 active:scale-90 transition-all">
+                                <button onClick={() => openModal('calendar')}
+                                    className="text-wd-primary text-xs font-semibold flex items-center gap-1 hover:opacity-70 active:scale-90 transition-all">
                                     Ver todas <ArrowRight size={13} />
                                 </button>
                             </div>
                             <div className="space-y-3">
-                                {upcomingTasks.map(task => {
-                                    const d = new Date(task.dueDate!);
-                                    const hasTime = d.getHours() !== 0 || d.getMinutes() !== 0;
-                                    const isOverdue = isBefore(hasTime ? d : endOfDay(d), new Date());
+                                {upcomingItems.map(item => {
+                                    const d = item.date;
+                                    const isOverdue = item.type === 'task' && isBefore(
+                                        item.time ? d : endOfDay(d), now
+                                    );
+                                    const dotColor = item.type === 'task'
+                                        ? (item.priority === 'alta' ? 'bg-red-400' : item.priority === 'media' ? 'bg-orange-400' : 'bg-emerald-400')
+                                        : item.color;
+                                    const calBg = item.type === 'event'
+                                        ? 'bg-violet-50 dark:bg-violet-900/30 text-violet-500'
+                                        : isOverdue ? 'bg-red-50 dark:bg-red-900/30 text-red-500' : 'bg-wd-primary-soft dark:bg-wd-primary-soft text-slate-700 dark:text-wd-primary';
                                     return (
-                                        <div key={task.id} className="flex items-center gap-3">
-                                            <div className={`shrink-0 w-11 h-11 rounded-xl flex flex-col items-center justify-center text-center ${isOverdue ? 'bg-red-50 dark:bg-red-900/30 text-red-500' : 'bg-[#e2f5f1] dark:bg-teal-900/40 text-[#21434b] dark:text-teal-300'}`}>
+                                        <div key={item.id} className="flex items-center gap-3">
+                                            <div className={`shrink-0 w-11 h-11 rounded-xl flex flex-col items-center justify-center text-center ${calBg}`}>
                                                 <span className="text-base font-bold leading-none">{format(d, 'd')}</span>
                                                 <span className="text-[9px] font-semibold uppercase tracking-wide opacity-70">{format(d, 'MMM', { locale: ptBR })}</span>
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <p className={`text-sm font-semibold truncate ${isOverdue ? 'text-red-500' : 'text-slate-700 dark:text-slate-200'}`}>{task.title}</p>
-                                                {hasTime && <p className="text-xs text-slate-400 dark:text-slate-500">{format(d, 'HH:mm')}</p>}
+                                                <p className={`text-sm font-semibold truncate ${isOverdue ? 'text-red-500' : 'text-slate-700 dark:text-slate-200'}`}>{item.title}</p>
+                                                <div className="flex items-center gap-2 mt-0.5">
+                                                    {item.time && <span className="text-xs text-slate-400">{item.time}</span>}
+                                                    <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${item.type === 'task'
+                                                        ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-500'
+                                                        : 'bg-violet-50 dark:bg-violet-900/30 text-violet-500'
+                                                        }`}>
+                                                        {item.type === 'task' ? 'Tarefa' : 'Compromisso'}
+                                                    </span>
+                                                </div>
                                             </div>
-                                            <div className={`w-2 h-2 rounded-full shrink-0 ${task.priority === 'alta' ? 'bg-red-400' : task.priority === 'media' ? 'bg-orange-400' : 'bg-emerald-400'}`} />
+                                            <div className={`w-2 h-2 rounded-full shrink-0 ${dotColor}`} />
                                         </div>
                                     );
                                 })}
@@ -249,13 +303,13 @@ const App = () => {
 
                     {/* Acesso rapido */}
                     <div className="wd-card-in bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-3xl shadow-sm p-5" style={{ animationDelay: '0.3s' }}>
-                        <h3 className="text-[#0c2f37] dark:text-slate-100 font-bold text-base mb-3 flex items-center gap-2">
-                            <ClipboardList size={18} className="text-[#3bbfa0]" />
+                        <h3 className="text-slate-800 dark:text-slate-100 font-bold text-base mb-3 flex items-center gap-2">
+                            <ClipboardList size={18} className="text-wd-primary" />
                             Acesso r&aacute;pido
                         </h3>
                         <div className="grid grid-cols-2 gap-2">
                             {([
-                                { label: 'Nova Tarefa', icon: CheckSquare, modal: 'tasks' as ModalType, color: 'bg-[#e2f5f1] dark:bg-teal-900/40 text-[#3bbfa0]' },
+                                { label: 'Nova Tarefa', icon: CheckSquare, modal: 'tasks' as ModalType, color: 'bg-wd-primary-soft dark:bg-wd-primary-soft text-wd-primary' },
                                 { label: 'Nova Nota', icon: FileText, modal: 'notes' as ModalType, color: 'bg-purple-50 dark:bg-purple-900/30 text-purple-400' },
                                 { label: 'Kanban', icon: Columns, modal: 'kanban' as ModalType, color: 'bg-blue-50 dark:bg-blue-900/30 text-blue-400' },
                                 { label: 'Lista', icon: ShoppingCart, modal: 'groceries' as ModalType, color: 'bg-orange-50 dark:bg-orange-900/30 text-orange-400' },

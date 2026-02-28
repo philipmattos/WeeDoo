@@ -13,6 +13,11 @@ export default {
                 sm: 'calc(var(--radius) - 4px)'
             },
             colors: {
+                /* WeeDoo brand — driven by CSS variables */
+                'wd-primary': 'var(--wd-primary)',
+                'wd-primary-dark': 'var(--wd-primary-dark)',
+                'wd-primary-soft': 'var(--wd-primary-soft)',
+                /* Shadcn tokens */
                 background: 'hsl(var(--background))',
                 foreground: 'hsl(var(--foreground))',
                 card: {

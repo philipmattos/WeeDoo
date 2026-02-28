@@ -4,7 +4,6 @@
 
 /* ── WeeDoo Micro-animations ───────────────────────────────────────────── */
 
-/* Toggle icon: rises from bottom like sun/moon on horizon */
 @keyframes wd-rise {
   0% {
     transform: translateY(110%);
@@ -30,7 +29,6 @@
   animation: wd-rise 0.5s cubic-bezier(0.34, 1.4, 0.64, 1) both;
 }
 
-/* Nav tab icon: pops up when becoming active */
 @keyframes wd-nav-pop {
   0% {
     transform: scale(1) translateY(0);
@@ -53,7 +51,6 @@
   animation: wd-nav-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-/* Nav label: fades + slides up when becoming active */
 @keyframes wd-label-up {
   0% {
     opacity: 0;
@@ -70,7 +67,6 @@
   animation: wd-label-up 0.35s ease-out both;
 }
 
-/* Key action: quick scale bounce (for +, delete, confirm buttons) */
 @keyframes wd-tap {
   0% {
     transform: scale(1);
@@ -93,7 +89,6 @@
   animation: wd-tap 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-/* Card entrance */
 @keyframes wd-card-in {
   0% {
     opacity: 0;
@@ -110,6 +105,7 @@
   animation: wd-card-in 0.3s ease-out both;
 }
 
+/* ── Theme Variables ────────────────────────────────────────────────────── */
 
 @layer base {
   :root {
@@ -135,6 +131,14 @@
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
 
+    /* ══ WeeDoo Brand — mude aqui para rethemear o app inteiro ══ */
+    --wd-primary: #01dd83;
+    /* cor principal da marca        */
+    --wd-primary-dark: #00c472;
+    /* hover / pressed               */
+    --wd-primary-soft: #e6fff5;
+    /* fundo suave (modo claro)      */
+
     /* WeeDoo semantic tokens — Light */
     --wd-bg: 248 250 252;
     /* slate-50  */
@@ -152,10 +156,6 @@
     /* slate-500 */
     --wd-text-4: 148 163 184;
     /* slate-400 */
-    --wd-green: 59 191 160;
-    /* #3bbfa0   */
-    --wd-green-soft: 226 245 241;
-    /* #e2f5f1   */
     --wd-nav-bg: 255 255 255;
     /* white     */
   }
@@ -178,33 +178,36 @@
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
+    --border: 215 20% 35%;
+    --input: 215 20% 38%;
+    /* lighter so input borders are visible on dark bg */
     --ring: 224.3 76.3% 48%;
+
+    /* ══ WeeDoo Brand — mesma cor, aparece bem no fundo escuro ══ */
+    --wd-primary: #01dd83;
+    --wd-primary-dark: #00c472;
+    --wd-primary-soft: #003d28;
+    /* fundo suave (modo escuro) */
 
     /* WeeDoo semantic tokens — Dark */
     --wd-bg: 15 23 42;
-    /* slate-900  */
+    /* slate-900 */
     --wd-surface: 30 41 59;
-    /* slate-800  */
+    /* slate-800 */
     --wd-surface-2: 51 65 85;
-    /* slate-700  */
+    /* slate-700 */
     --wd-border: 71 85 105;
-    /* slate-600  */
+    /* slate-600 */
     --wd-text-1: 248 250 252;
-    /* slate-50   */
+    /* slate-50  */
     --wd-text-2: 226 232 240;
-    /* slate-200  */
+    /* slate-200 */
     --wd-text-3: 148 163 184;
-    /* slate-400  */
+    /* slate-400 */
     --wd-text-4: 100 116 139;
-    /* slate-500  */
-    --wd-green: 59 191 160;
-    /* #3bbfa0 — same */
-    --wd-green-soft: 14 42 38;
-    /* very dark teal */
+    /* slate-500 */
     --wd-nav-bg: 30 41 59;
-    /* slate-800  */
+    /* slate-800 */
   }
 }
 
@@ -220,7 +223,14 @@
   }
 }
 
-/* ─── WeeDoo utility classes using semantic tokens ─────────────────────── */
+/* Dark mode: garante borda visível em todos os inputs e textareas */
+.dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.dark textarea {
+  border-color: hsl(215 20% 40%) !important;
+  border-width: 1px;
+}
+
+/* ── WeeDoo utility classes ─────────────────────────────────────────────── */
 .wd-bg {
   background-color: rgb(var(--wd-bg));
 }
@@ -253,23 +263,11 @@
   color: rgb(var(--wd-text-4));
 }
 
-.wd-green {
-  color: rgb(var(--wd-green));
-}
-
-.wd-green-bg {
-  background-color: rgb(var(--wd-green));
-}
-
-.wd-green-soft {
-  background-color: rgb(var(--wd-green-soft));
-}
-
 .wd-nav {
   background-color: rgb(var(--wd-nav-bg));
 }
 
-/* ─── Notes Editor: custom heading scale ──────────────────────────────── */
+/* ── Notes Editor: custom heading scale ────────────────────────────────── */
 .notes-editor {
   font-family: inherit;
   color: rgb(var(--wd-text-2));

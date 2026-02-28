@@ -2,7 +2,7 @@
 
 **O Seu Kit de Produtividade Pessoal Definitivo.**
 
-O **WeeDoo** não é apenas um aplicativo; ele é um super-hub focado em facilitar o seu dia a dia, juntando em um só lugar as principais ferramentas necessárias para organizar a sua vida moderna. Projetado com foco total em usabilidade móvel, ele é rápido, visualmente confortável de usar e não te obriga a criar contas para poder começar!
+O **WeeDoo** não é apenas um aplicativo; ele é um super-hub focado em facilitar o seu dia a dia, juntando em um só lugar as principais ferramentas necessárias para organizar a sua vida moderna. Projetado com foco total em usabilidade móvel, ele é rápido, visualmente confortável de usar e totalmente livre — **você não precisa de logins, cadastros ou criar senhas** para poder começar. A privacidade é garantida via funcionamento "Local-First".
 
 A melhor parte? Você não precisa de cinco aplicativos abertos. Toda vez que você quiser usar uma ferramenta nossa, ela desliza pela sua tela na forma de um prático *Modal*, sem confusões ou carregamentos desnecessários.
 
