@@ -33,8 +33,19 @@ export default async (req: Request, context: Context) => {
         if (action === "GET_RECORD") {
             airtableUrl += `?filterByFormula=${encodeURIComponent(filterByFormula)}&maxRecords=1`;
             fetchOptions.method = "GET";
-        } else if (action === "SYNC_RECORD") {
+        } else if (action === "GET_BY_ID") {
+            airtableUrl += `/${body.recordId}`;
+            fetchOptions.method = "GET";
+        } else if (action === "CREATE_RECORD") {
             fetchOptions.method = "POST";
+            fetchOptions.body = JSON.stringify(payload);
+        } else if (action === "UPDATE_RECORD") {
+            airtableUrl += `/${body.recordId}`;
+            fetchOptions.method = "PATCH";
+            fetchOptions.body = JSON.stringify(payload);
+        } else if (action === "SYNC_RECORD") {
+            const hasId = payload?.records?.[0]?.id;
+            fetchOptions.method = hasId ? "PATCH" : "POST";
             fetchOptions.body = JSON.stringify(payload);
         } else {
             return new Response(JSON.stringify({ error: "Invalid Action" }), { status: 400 });
