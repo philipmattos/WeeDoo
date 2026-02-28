@@ -158,9 +158,9 @@ export const WelcomeScreen = () => {
                     <span className="bg-wd-primary dark:bg-[#04C776] px-4 text-xs font-bold text-white/70 uppercase tracking-widest z-10 relative">OU</span>
                 </div>
 
-                <form onSubmit={handleLogin} className={`w-full flex flex-col gap-3 anim-content-2 ${loginError ? 'anim-shake' : ''}`}>
+                <form onSubmit={handleLogin} className="w-full flex flex-col gap-3 anim-content-2">
                     <label className="text-sm font-semibold text-white/90 ml-2 drop-shadow-sm">Já possuo um Savecode</label>
-                    <div className="flex bg-white/20 backdrop-blur-md p-1 rounded-full shadow-inner border border-white/30 focus-within:ring-2 focus-within:ring-white/50 transition-shadow">
+                    <div className={`flex bg-white/20 backdrop-blur-md p-1 rounded-full shadow-inner border border-white/30 focus-within:ring-2 focus-within:ring-white/50 transition-shadow ${loginError ? 'anim-shake' : ''}`}>
                         <Input
                             type="text"
                             placeholder="Ex: wd-A8K3PX9V..."
