@@ -253,13 +253,15 @@ export const NotesModal = () => {
             {/* ── LIST VIEW ── */}
             {view === 'list' && (
                 <div className="flex flex-col h-full animate-in fade-in duration-300 pt-2 pb-24 gap-4">
-                    <Button
-                        onClick={handleCreateNote}
-                        className="w-full rounded-full bg-wd-primary text-white hover:bg-wd-primary-dark h-10 font-bold text-sm shadow-sm transition-transform hover:scale-[1.02] flex items-center justify-center gap-2"
-                    >
-                        <Plus size={22} />
-                        Adicionar notas
-                    </Button>
+                    <div className="flex justify-start">
+                        <Button
+                            onClick={handleCreateNote}
+                            className="w-auto px-6 rounded-full bg-wd-primary text-white hover:bg-wd-primary-dark h-11 font-bold text-sm shadow-sm transition-transform hover:scale-[1.02] flex items-center justify-center gap-2"
+                        >
+                            <Plus size={22} strokeWidth={3} />
+                            Adicionar notas
+                        </Button>
+                    </div>
 
                     <div className="flex flex-col gap-3 overflow-y-auto flex-1">
                         {notes.length === 0 ? (

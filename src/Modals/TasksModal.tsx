@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ptBR } from "date-fns/locale";
 import { format } from "date-fns";
 
@@ -158,7 +159,7 @@ export const TasksModal = () => {
     const { tasks, addTask, toggleTaskCompletion, updateTaskTitle, updateTaskDueDate, deleteTask, getCategories } = useTaskStore();
 
     const [title, setTitle] = useState('');
-    const [priority, setPriority] = useState<TaskPriority>('media');
+    const [priority, setPriority] = useState<TaskPriority>('baixa');
     const [category, setCategory] = useState('');
 
     const [currentFilter, setCurrentFilter] = useState<FilterType>('todos');
@@ -177,7 +178,7 @@ export const TasksModal = () => {
         if (!title.trim()) return;
         addTask(title.trim(), priority, category.trim());
         setTitle('');
-        setPriority('media');
+        setPriority('baixa');
         setCategory('');
     };
 
@@ -234,21 +235,37 @@ export const TasksModal = () => {
                             <Button
                                 type="submit"
                                 size="icon"
-                                className="h-11 w-11 bg-wd-primary-soft text-wd-primary rounded-full hover:bg-[#d0efe8] hover:scale-105 transition-transform shrink-0"
+                                className="h-11 w-11 bg-wd-primary text-white rounded-full hover:bg-wd-primary-dark hover:scale-105 transition-transform shrink-0 shadow-md font-bold"
                             >
-                                <Plus size={24} />
+                                <Plus size={26} strokeWidth={3} />
                             </Button>
                         </div>
                         <div className="flex gap-2">
-                            <select
-                                value={priority}
-                                onChange={(e) => setPriority(e.target.value as TaskPriority)}
-                                className="h-11 border border-input rounded-full px-3 text-sm focus:outline-none focus:ring-1 focus:ring-wd-primary min-w-[100px] bg-background appearance-none"
-                            >
-                                <option value="baixa">🟢 Baixa</option>
-                                <option value="media">🟠 Média</option>
-                                <option value="alta">🔴 Alta</option>
-                            </select>
+                            <Select value={priority} onValueChange={(v) => setPriority(v as TaskPriority)}>
+                                <SelectTrigger className="h-11 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 rounded-full px-4 focus:ring-wd-primary w-[130px] shadow-sm">
+                                    <SelectValue placeholder="Prioridade" />
+                                </SelectTrigger>
+                                <SelectContent className="rounded-2xl border-slate-200 dark:border-slate-700 shadow-xl bg-white dark:bg-slate-800">
+                                    <SelectItem value="baixa" className="rounded-xl cursor-pointer">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-3.5 h-3.5 rounded-full bg-emerald-500" />
+                                            <span className="font-medium text-slate-700 dark:text-slate-200">Baixa</span>
+                                        </div>
+                                    </SelectItem>
+                                    <SelectItem value="media" className="rounded-xl cursor-pointer">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-3.5 h-3.5 rounded-full bg-orange-500" />
+                                            <span className="font-medium text-slate-700 dark:text-slate-200">Média</span>
+                                        </div>
+                                    </SelectItem>
+                                    <SelectItem value="alta" className="rounded-xl cursor-pointer">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-3.5 h-3.5 rounded-full bg-red-500" />
+                                            <span className="font-medium text-slate-700 dark:text-slate-200">Alta</span>
+                                        </div>
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
                             <Input
                                 type="text"
                                 placeholder="Categoria (opcional)"

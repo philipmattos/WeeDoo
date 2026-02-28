@@ -7,10 +7,14 @@ import { useKanbanStore } from './store/kanbanStore';
 import { useNotesStore } from './store/notesStore';
 import { useGroceryStore } from './store/groceryStore';
 import { useCalendarStore } from './store/calendarStore';
+import { useAuthStore } from './store/authStore';
+import { WelcomeScreen } from './features/auth/WelcomeScreen';
+import { CloudSync } from './features/sync/CloudSync';
+import { syncUserDataToAirtable } from './services/airtable';
 import {
     Sun, Moon, User, FileText, Home, CheckSquare,
     Columns, ShoppingCart, AlertCircle, Calendar1,
-    ClipboardList, StickyNote, ArrowRight
+    ClipboardList, StickyNote, ArrowRight, LogOut, Copy, CloudUpload, Loader2, CloudCheck, XCircle, CircleCheck
 } from 'lucide-react';
 import { format, isBefore, endOfDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -27,28 +31,28 @@ const ThemeToggle = () => {
         <button
             onClick={toggle}
             title={isDark ? 'Modo claro' : 'Modo escuro'}
-            className="relative flex items-center w-[52px] h-[28px] rounded-full transition-colors cursor-pointer shrink-0 overflow-hidden"
+            className="relative flex items-center w-[64px] h-[32px] rounded-full transition-colors cursor-pointer shrink-0 overflow-hidden"
             style={{
                 backgroundColor: isDark ? '#04C776' : '#09ED91',
                 overflow: 'hidden',
             }}
         >
             {/* Background icons — white, visible, above background */}
-            <Sun size={16} className="absolute left-[6px]  top-1/2 -translate-y-1/2 text-white pointer-events-none z-[1]" />
-            <Moon size={16} className="absolute right-[6px] top-1/2 -translate-y-1/2 text-white pointer-events-none z-[1]" />
+            <Sun size={18} className="absolute left-[8px] top-1/2 -translate-y-1/2 text-white pointer-events-none z-[1]" />
+            <Moon size={18} className="absolute right-[8px] top-1/2 -translate-y-1/2 text-white pointer-events-none z-[1]" />
 
             {/* Sliding white thumb — overflow hidden clips the rising icon */}
             <span
-                className={`absolute top-[3px] w-[22px] h-[22px] rounded-full bg-white shadow-md
+                className={`absolute top-[4px] w-[24px] h-[24px] rounded-full bg-white shadow-md
                             flex items-center justify-center overflow-hidden z-10
                             transition-[left] duration-500`}
-                style={{ left: isDark ? '27px' : '3px' }}
+                style={{ left: isDark ? '36px' : '4px' }}
             >
                 {/* Icon key changes on toggle => remounts => triggers wd-rise animation */}
                 <span key={iconKey} className="wd-rise flex items-center justify-center">
                     {isDark
-                        ? <Moon size={12} className="text-slate-600" />
-                        : <Sun size={12} className="text-[#F0BC00]" />
+                        ? <Moon size={14} className="text-slate-600" />
+                        : <Sun size={14} className="text-[#F0BC00]" />
                     }
                 </span>
             </span>
@@ -83,8 +87,13 @@ const NavButton = ({
 
 // -- Main App ----------------------------------------------------------------
 const App = () => {
+    const { isLoggedIn, saveCode, logout } = useAuthStore();
     const { openModal } = useModalStore();
     const activeModal = useModalStore(s => s.activeModal);
+    const [copiedId, setCopiedId] = useState(false);
+    const [isCopying, setIsCopying] = useState(false);
+    const [isForceSyncing, setIsForceSyncing] = useState(false);
+    const [syncResult, setSyncResult] = useState<'success' | 'error' | null>(null);
 
     const [userName, setUserName] = useState(() => {
         if (typeof window !== 'undefined') {
@@ -163,6 +172,53 @@ const App = () => {
         { id: 'calendar', icon: Calendar1, label: 'Agenda', onClick: () => openModal('calendar') },
     ] as const;
 
+    if (!isLoggedIn) {
+        return <WelcomeScreen />;
+    }
+
+    const handleCopyId = () => {
+        if (saveCode) {
+            setIsCopying(true);
+            navigator.clipboard.writeText(saveCode);
+            setTimeout(() => {
+                setIsCopying(false);
+                setCopiedId(true);
+                setTimeout(() => setCopiedId(false), 2000);
+            }, 500);
+        }
+    };
+
+    const handleForceSync = async () => {
+        if (!saveCode) return;
+        setIsForceSyncing(true);
+        setSyncResult(null);
+        try {
+            const taskStore = useTaskStore.getState();
+            const noteStore = useNotesStore.getState();
+            const kanbanStore = useKanbanStore.getState();
+            const calendarStore = useCalendarStore.getState();
+            const themeStore = useThemeStore.getState();
+
+            const minTime = new Promise(resolve => setTimeout(resolve, 500));
+
+            await Promise.allSettled([
+                syncUserDataToAirtable('UsersData_Tasks', saveCode, JSON.stringify({ tasks: taskStore.tasks })),
+                syncUserDataToAirtable('UsersData_Notes', saveCode, JSON.stringify({ notes: noteStore.notes })),
+                syncUserDataToAirtable('UsersData_Kanban', saveCode, JSON.stringify({ columns: kanbanStore.columns, tasks: kanbanStore.tasks })),
+                syncUserDataToAirtable('UsersData_Calendar', saveCode, JSON.stringify({ events: calendarStore.events })),
+                syncUserDataToAirtable('UsersData_Config', saveCode, JSON.stringify({ isDark: themeStore.isDark })),
+                minTime
+            ]);
+            setSyncResult('success');
+        } catch (error) {
+            console.error("Erro na sincronização forçada", error);
+            setSyncResult('error');
+        } finally {
+            setIsForceSyncing(false);
+            setTimeout(() => setSyncResult(null), 5000); // tempo respiro visual badge
+        }
+    };
+
     return (
         <div className="flex flex-col h-screen overflow-hidden text-slate-800 dark:text-slate-100 font-sans sm:max-w-md sm:mx-auto sm:shadow-xl sm:border-x bg-slate-50 dark:bg-slate-900">
 
@@ -178,19 +234,61 @@ const App = () => {
                 <main className="flex-1 overflow-y-auto overscroll-contain p-4 pb-28 space-y-4">
 
                     {/* Profile Card */}
-                    <div className="wd-card-in bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm flex items-center gap-4 border border-slate-100 dark:border-slate-700">
-                        <div className="bg-wd-primary-soft dark:bg-wd-primary-soft w-14 h-14 rounded-full flex items-center justify-center text-[#21434b] dark:text-wd-primary shrink-0">
-                            <User size={28} />
+                    <div className="wd-card-in bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col gap-4">
+                        <div className="flex items-center gap-4 justify-between">
+                            <div className="flex items-center gap-4 w-full min-w-0">
+                                <div className="bg-wd-primary-soft dark:bg-wd-primary-soft w-14 h-14 rounded-full flex items-center justify-center text-[#21434b] dark:text-wd-primary shrink-0 transition-transform active:scale-95">
+                                    <User size={28} />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <input
+                                        type="text"
+                                        value={userName}
+                                        onChange={handleNameChange}
+                                        className="text-lg font-bold text-[#0c2f37] dark:text-slate-100 bg-transparent border-none outline-none focus:ring-2 focus:ring-wd-primary/20 rounded px-1 -ml-1 w-full"
+                                        placeholder="Seu Nome"
+                                    />
+                                    <p className="text-sm text-slate-400 dark:text-slate-500 capitalize">{today}</p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={logout}
+                                title="Sair do Savecode"
+                                className="w-10 h-10 shrink-0 bg-red-50 dark:bg-red-900/20 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-full flex items-center justify-center transition-colors"
+                            >
+                                <LogOut size={18} />
+                            </button>
                         </div>
-                        <div className="min-w-0">
-                            <input
-                                type="text"
-                                value={userName}
-                                onChange={handleNameChange}
-                                className="text-lg font-bold text-[#0c2f37] dark:text-slate-100 bg-transparent border-none outline-none focus:ring-2 focus:ring-wd-primary/20 rounded px-1 -ml-1 w-full max-w-[200px]"
-                                placeholder="Seu Nome"
-                            />
-                            <p className="text-sm text-slate-400 dark:text-slate-500 capitalize">{today}</p>
+
+                        <div className="flex justify-start w-full gap-2 items-center">
+                            <button
+                                onClick={handleCopyId}
+                                disabled={isCopying}
+                                className={`flex px-5 items-center justify-center gap-2 h-10 rounded-full font-bold transition-all shadow-sm text-xs ${copiedId ? 'bg-emerald-500 text-white' : 'bg-wd-primary hover:bg-wd-primary-dark text-white'}`}
+                            >
+                                {isCopying ? <Loader2 size={18} className="animate-spin" /> : (copiedId ? <CircleCheck size={18} /> : <Copy size={18} />)}
+                                {!isCopying && (copiedId ? 'ID Copiada!' : 'Copiar ID Mestre')}
+                            </button>
+
+                            <button
+                                onClick={handleForceSync}
+                                disabled={isForceSyncing}
+                                className="flex px-5 items-center justify-center gap-2 h-10 rounded-full font-bold transition-all shadow-md text-xs bg-blue-500 hover:bg-blue-600 text-white disabled:opacity-75 disabled:cursor-not-allowed"
+                            >
+                                {isForceSyncing ? <Loader2 size={18} className="animate-spin" /> : <CloudUpload size={18} />}
+                                {!isForceSyncing && 'Sincronizar'}
+                            </button>
+
+                            {syncResult === 'success' && (
+                                <div className="flex items-center justify-center h-10 px-3 bg-wd-primary text-white rounded-full animate-in fade-in slide-in-from-left-4 duration-300">
+                                    <CloudCheck size={18} />
+                                </div>
+                            )}
+                            {syncResult === 'error' && (
+                                <div className="flex items-center justify-center h-10 px-3 bg-red-500 text-white rounded-full animate-in fade-in slide-in-from-left-4 duration-300">
+                                    <XCircle size={18} />
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -301,30 +399,6 @@ const App = () => {
                         </div>
                     )}
 
-                    {/* Acesso rapido */}
-                    <div className="wd-card-in bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-3xl shadow-sm p-5" style={{ animationDelay: '0.3s' }}>
-                        <h3 className="text-slate-800 dark:text-slate-100 font-bold text-base mb-3 flex items-center gap-2">
-                            <ClipboardList size={18} className="text-wd-primary" />
-                            Acesso r&aacute;pido
-                        </h3>
-                        <div className="grid grid-cols-2 gap-2">
-                            {([
-                                { label: 'Nova Tarefa', icon: CheckSquare, modal: 'tasks' as ModalType, color: 'bg-wd-primary-soft dark:bg-wd-primary-soft text-wd-primary' },
-                                { label: 'Nova Nota', icon: FileText, modal: 'notes' as ModalType, color: 'bg-purple-50 dark:bg-purple-900/30 text-purple-400' },
-                                { label: 'Kanban', icon: Columns, modal: 'kanban' as ModalType, color: 'bg-blue-50 dark:bg-blue-900/30 text-blue-400' },
-                                { label: 'Lista', icon: ShoppingCart, modal: 'groceries' as ModalType, color: 'bg-orange-50 dark:bg-orange-900/30 text-orange-400' },
-                            ]).map(({ label, icon: Icon, modal, color }) => (
-                                <button key={label} onClick={() => openModal(modal)}
-                                    className="flex items-center gap-3 p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-700 hover:scale-[1.03] active:scale-[0.96] transition-all text-left">
-                                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${color}`}>
-                                        <Icon size={18} />
-                                    </div>
-                                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{label}</span>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
                 </main>
             )}
 
@@ -349,6 +423,9 @@ const App = () => {
                     })}
                 </div>
             </nav>
+
+            {/* Sync Manager (Invisible Worker) */}
+            <CloudSync />
 
         </div>
     );

@@ -187,9 +187,9 @@ export const KanbanModal = () => {
                     <Button
                         type="submit"
                         size="icon"
-                        className="h-12 w-12 bg-wd-primary hover:bg-wd-primary-dark text-white rounded-full transition-transform hover:scale-105 shrink-0 shadow-sm"
+                        className="h-12 w-12 bg-wd-primary hover:bg-wd-primary-dark text-white rounded-full transition-transform hover:scale-105 shrink-0 shadow-sm font-bold"
                     >
-                        <Plus size={24} />
+                        <Plus size={24} strokeWidth={3} />
                     </Button>
                 </form>
 
@@ -358,9 +358,9 @@ function ColumnContainer({ column, columns, deleteColumn, tasks, addTask, delete
                     <Button
                         type="submit"
                         size="icon"
-                        className="h-10 w-10 shrink-0 bg-wd-primary-soft text-wd-primary hover:bg-[#d0efe8] rounded-xl hover:scale-105 transition-transform"
+                        className="h-10 w-10 shrink-0 bg-wd-primary text-white hover:bg-wd-primary-dark rounded-xl hover:scale-105 transition-transform font-bold"
                     >
-                        <Plus size={20} />
+                        <Plus size={20} strokeWidth={3} />
                     </Button>
                 </div>
             </form>

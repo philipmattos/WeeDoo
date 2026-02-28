@@ -97,3 +97,82 @@ export async function updateListRecord(recordId: string, title: string, itemsDat
         throw error;
     }
 }
+
+// ─── USER DATA WRAPPERS (Multi-Table Autosave) ─────────────────────────
+
+export type UserDataTableName = 'UsersData_Tasks' | 'UsersData_Kanban' | 'UsersData_Notes' | 'UsersData_Calendar' | 'UsersData_Config';
+
+export interface UserDataRecord {
+    id: string;
+    fields: {
+        CodeID: string;
+        Data: string;
+    }
+}
+
+/**
+ * Puxa os dados (Download) salvos na tabela em nuvem referentes ao Savecode.
+ */
+export async function fetchUserDataRecord(tableName: UserDataTableName, codeId: string): Promise<UserDataRecord | null> {
+    try {
+        // Encontra a exata linha do usuário filtrando.
+        const filterFormula = `CodeID = '${codeId}'`;
+        const url = `https://api.airtable.com/v0/${BASE_ID}/${tableName}?filterByFormula=${encodeURIComponent(filterFormula)}&maxRecords=1`;
+
+        const response = await fetch(url, { headers });
+        if (!response.ok) throw new Error(`Airtable error fetching ${tableName}: ${response.statusText}`);
+
+        const data = await response.json();
+        if (data.records && data.records.length > 0) {
+            return data.records[0];
+        }
+        return null;
+    } catch (error) {
+        console.error(`Error fetching user data from ${tableName}:`, error);
+        return null; // Não causa crash. Apenas falha o download da nuvem de modo silencioso.
+    }
+}
+
+/**
+ * Comportamento de Upsert (Insere novo registro, ou faz PATCH no existente) daquele app isolado.
+ */
+export async function syncUserDataToAirtable(tableName: UserDataTableName, codeId: string, jsonData: string): Promise<void> {
+    try {
+        const existingRecord = await fetchUserDataRecord(tableName, codeId);
+        const baseUrl = `https://api.airtable.com/v0/${BASE_ID}/${tableName}`;
+
+        if (existingRecord) {
+            // PATCH (Atualiza a linha contendo o JSON)
+            const payload = {
+                fields: {
+                    Data: jsonData,
+                }
+            };
+            const response = await fetch(`${baseUrl}/${existingRecord.id}`, {
+                method: 'PATCH',
+                headers,
+                body: JSON.stringify(payload),
+            });
+            if (!response.ok) throw new Error(`Failed to update ${tableName}`);
+        } else {
+            // POST (Cria do zero se o usuário for novo na tabela)
+            const payload = {
+                records: [{
+                    fields: {
+                        CodeID: codeId,
+                        Data: jsonData,
+                    }
+                }]
+            };
+            const response = await fetch(baseUrl, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(payload),
+            });
+            if (!response.ok) throw new Error(`Failed to insert into ${tableName}`);
+        }
+    } catch (error) {
+        console.error(`Error autosyncing user data to ${tableName}:`, error);
+        // Ocultado/fail-safe para não travar interfaces em caso de falta de internet.
+    }
+}

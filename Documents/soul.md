@@ -9,9 +9,10 @@
 - **Abordagem Mobile-First:** A UI deve ser primariamente pensada para dispositivos móveis, com visual e sensação próximos de aplicativos nativos. Utilizaremos modais/janelas sobrepostas para facilitar a visualização de abas e formulários.
 
 ## 2. Regras de Negócio e Modos de Uso
-O aplicativo possui foco único em navegação livre e off-line. 
-- **Local-First & Anonymous:** Todo controle é mantido no cache/localStorage. O aplicativo não exige nem contém telas de registro (sem obrigação de contas/Auth). Totalmente focado em fricção zero.
-- **Compartilhamento Efêmero:** O acesso entre múltiplos usuários é feito trocando/vinculando os "Web Links" / IDs. Não existe login para acessar e as listas de compras agem como salas compartilháveis autônomas através do backend do Airtable.
+O aplicativo possui foco em fricção zero. 
+- **Local-First:** Todo controle principal é mantido no cache/localStorage. O aplicativo tenta ser o mais autônomo possível.
+- **Limites de Crescimento (Anti-Bloating):** É expressamente proibido empacotar o armazenamento de arquivos pesados (ex: Imagens ou Vídeos no Airtable). A base suporta apenas armazenamento atômico (JSON/Strings puras) para evitar gargalos de tráfego, custos e estouro do limite de Payload de JSON.
+- **Compartilhamento Efêmero (Groceries):** O acesso a listas entre múltiplos usuários é feito trocando/vinculando os "Web Links" / IDs gerados. A atualização é direcional sem necessidade de Auth.
 
 ## 3. Padrões de Código
 Abaixo constam as convenções estritas que guiarão o desenvolvimento (são as diretrizes de "Clean Code" e "Arquitetura"):
