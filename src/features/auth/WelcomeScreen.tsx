@@ -75,9 +75,9 @@ export const WelcomeScreen = () => {
                 setIsHydrating(false);
                 loginWithCode(code); // Libera o acesso para o Dashboard
             } catch (error) {
-                console.warn("Hydration failed or offline. Logging in with local cache.", error);
+                console.error("Hydration failed due to network error.", error);
+                setLoginError("Erro de Rede. É necessária uma conexão com a internet para buscar um Savecode.");
                 setIsHydrating(false);
-                loginWithCode(code);
             }
         }
     };
