@@ -183,7 +183,7 @@ const App = () => {
             setTimeout(() => {
                 setIsCopying(false);
                 setCopiedId(true);
-                setTimeout(() => setCopiedId(false), 2000);
+                setTimeout(() => setCopiedId(false), 1000);
             }, 500);
         }
     };
@@ -260,14 +260,14 @@ const App = () => {
                             </button>
                         </div>
 
-                        <div className="flex justify-start w-full gap-2 items-center">
+                        <div className="flex justify-start w-full gap-2 items-center relative">
                             <button
                                 onClick={handleCopyId}
                                 disabled={isCopying}
-                                className={`flex px-5 items-center justify-center gap-2 h-10 rounded-full font-bold transition-all shadow-sm text-xs ${copiedId ? 'bg-emerald-500 text-white' : 'bg-wd-primary hover:bg-wd-primary-dark text-white'}`}
+                                className="flex px-5 items-center justify-center gap-2 h-10 rounded-full font-bold transition-all shadow-sm text-xs bg-wd-primary hover:bg-wd-primary-dark text-white"
                             >
-                                {isCopying ? <Loader2 size={18} className="animate-spin" /> : (copiedId ? <CircleCheck size={18} /> : <Copy size={18} />)}
-                                {!isCopying && (copiedId ? 'ID Copiada!' : 'Copiar ID Mestre')}
+                                {isCopying ? <Loader2 size={18} className="animate-spin" /> : <Copy size={18} />}
+                                {!isCopying && 'Copiar ID Mestre'}
                             </button>
 
                             <button
@@ -279,16 +279,20 @@ const App = () => {
                                 {!isForceSyncing && 'Sincronizar'}
                             </button>
 
-                            {syncResult === 'success' && (
-                                <div className="ml-auto flex items-center justify-center h-10 px-3 bg-wd-primary text-white rounded-full animate-in fade-in slide-in-from-right-4 duration-300">
+                            <div className="ml-auto w-10 relative flex justify-end h-full">
+                                {/* Copy ID Badge */}
+                                <div className={`absolute right-0 flex items-center justify-center h-10 px-3 bg-wd-primary text-white rounded-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${copiedId ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
+                                    <CircleCheck size={18} />
+                                </div>
+                                {/* Sync Success Badge */}
+                                <div className={`absolute right-0 flex items-center justify-center h-10 px-3 bg-wd-primary text-white rounded-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${syncResult === 'success' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
                                     <CloudCheck size={18} />
                                 </div>
-                            )}
-                            {syncResult === 'error' && (
-                                <div className="ml-auto flex items-center justify-center h-10 px-3 bg-red-500 text-white rounded-full animate-in fade-in slide-in-from-right-4 duration-300">
+                                {/* Sync Error Badge */}
+                                <div className={`absolute right-0 flex items-center justify-center h-10 px-3 bg-red-500 text-white rounded-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${syncResult === 'error' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
                                     <XCircle size={18} />
                                 </div>
-                            )}
+                            </div>
                         </div>
                     </div>
 
