@@ -158,7 +158,7 @@ export const WelcomeScreen = () => {
                     <span className="bg-wd-primary dark:bg-[#04C776] px-4 text-xs font-bold text-white/70 uppercase tracking-widest z-10 relative">OU</span>
                 </div>
 
-                <form onSubmit={handleLogin} className="w-full flex flex-col gap-3 anim-content-2">
+                <form onSubmit={handleLogin} className="w-full relative flex flex-col gap-3 anim-content-2">
                     <label className="text-sm font-semibold text-white/90 ml-2 drop-shadow-sm">Já possuo um Savecode</label>
                     <div className={`flex bg-white/20 backdrop-blur-md p-1 rounded-full shadow-inner border border-white/30 focus-within:ring-2 focus-within:ring-white/50 transition-shadow ${loginError ? 'anim-shake' : ''}`}>
                         <Input
@@ -179,7 +179,7 @@ export const WelcomeScreen = () => {
                         </Button>
                     </div>
                     {loginError && (
-                        <div className="flex items-center gap-2 justify-center bg-[#ffe9d9] text-[#7f1d1d] p-3 rounded-2xl text-sm font-bold mt-1 shadow-lg border border-[#fca5a5]">
+                        <div className="absolute top-full left-0 right-0 mt-3 w-full flex items-center gap-2 justify-center bg-[#ffe9d9] text-[#7f1d1d] p-3 rounded-2xl text-sm font-bold shadow-xl border border-[#fca5a5] z-20">
                             <CircleAlert size={18} strokeWidth={2.5} />
                             <p>{loginError}</p>
                         </div>
