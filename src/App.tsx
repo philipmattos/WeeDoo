@@ -72,8 +72,7 @@ const DockItem = ({
             layout
             transition={{ type: "tween", ease: "easeInOut", duration: 0.25 }}
             onClick={onClick}
-            // we use style={{ borderRadius: 9999 }} below to enforce pill shape during layout transition
-            style={{ borderRadius: 9999 }}
+            style={{ borderRadius: 0 }}
             className={`flex items-center justify-center flex-nowrap h-12 outline-none
                 ${active ? 'bg-white text-wd-primary px-4 shadow-sm' : 'bg-[#e0fdf1]/20 hover:bg-[#e0fdf1]/30 text-white w-12'}`}
         >
@@ -424,8 +423,8 @@ const App = () => {
             {/* Tab panels */}
             <ModalManager />
 
-            {/* Bottom Navigation (Magic Dock) */}
-            <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 p-1.5 bg-wd-primary rounded-full shadow-2xl flex items-center gap-1 border border-white/10 sm:max-w-md w-max">
+            {/* Bottom Navigation (Square Dock) */}
+            <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 p-1.5 bg-wd-primary rounded-none shadow-2xl flex items-center gap-1 border border-white/10 sm:max-w-md w-max">
                 {navItems.map(({ id, icon, label, onClick }) => {
                     const active = id === null ? !activeModal : activeModal === id;
                     return (
