@@ -214,13 +214,13 @@ export const CalendarModal = () => {
                 <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-full self-center mb-1">
                     <button
                         onClick={() => setViewMode('month')}
-                        className={`px-6 py-1.5 rounded-full text-sm font-bold transition-all ${viewMode === 'month' ? 'bg-white dark:bg-slate-700 text-wd-primary shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'}`}
+                        className={`px-6 py-1.5 rounded-full text-sm transition-all ${viewMode === 'month' ? 'font-bold bg-white dark:bg-slate-700 text-wd-primary shadow-sm' : 'font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'}`}
                     >
                         Mês
                     </button>
                     <button
                         onClick={() => setViewMode('week')}
-                        className={`px-6 py-1.5 rounded-full text-sm font-bold transition-all ${viewMode === 'week' ? 'bg-white dark:bg-slate-700 text-wd-primary shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'}`}
+                        className={`px-6 py-1.5 rounded-full text-sm transition-all ${viewMode === 'week' ? 'font-bold bg-white dark:bg-slate-700 text-wd-primary shadow-sm' : 'font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'}`}
                     >
                         Semana
                     </button>
@@ -255,23 +255,23 @@ export const CalendarModal = () => {
                             locale={ptBR}
                             modifiers={modifiers}
                             modifiersClassNames={modifiersClassNames}
-                            className="w-full [--cell-size:2.5rem]"
+                            className="w-full mx-auto sm:w-[350px] p-2 sm:p-4 [--cell-size:2.5rem]"
                             classNames={{
                                 months: 'w-full',
                                 month: 'w-full',
                                 table: 'w-full',
-                                weekdays: 'flex justify-between px-4',
-                                weekday: 'flex-1 text-center text-xs text-slate-400 dark:text-slate-500 font-medium py-2',
-                                week: 'flex justify-between px-2',
+                                weekdays: 'flex justify-between px-2',
+                                weekday: 'flex-1 text-center text-xs text-slate-400 dark:text-slate-500 font-bold py-2',
+                                week: 'flex justify-between px-2 mt-1',
                                 day: 'flex-1 flex items-center justify-center aspect-square',
                                 month_caption: 'flex h-10 w-full items-center justify-center px-10',
-                                caption_label: 'text-sm font-bold text-slate-800 dark:text-slate-100 capitalize',
-                                nav: 'absolute inset-x-0 top-0 flex w-full items-center justify-between px-2 pt-1',
+                                caption_label: 'text-base font-extrabold text-slate-800 dark:text-slate-100 capitalize',
+                                nav: 'absolute inset-x-0 top-0 flex w-full items-center justify-between px-4 pt-3 sm:pt-5',
                                 today: 'font-bold text-wd-primary',
                             }}
                         />
                     ) : (
-                        <div className="flex flex-col w-full p-4 pt-4 pb-5">
+                        <div className="flex flex-col w-full mx-auto sm:w-[350px] p-4 pt-4 pb-5">
                             <div className="flex items-center justify-between mb-4 px-2">
                                 <button
                                     onClick={() => setSelectedDate(subWeeks(selectedDate, 1))}
