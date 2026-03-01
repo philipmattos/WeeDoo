@@ -458,11 +458,11 @@ export const GroceriesModal = () => {
 
                 {/* Importar Dialog */}
                 <Dialog open={isImportDialogOpen} onOpenChange={setIsImportDialogOpen}>
-                    <DialogContent className="sm:max-w-md bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-700">
+                    <DialogContent className="w-[80vw] sm:max-w-md bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-700">
                         <DialogHeader>
                             <DialogTitle className="text-slate-800 dark:text-slate-100">Importar Lista</DialogTitle>
                             <DialogDescription className="text-slate-500 dark:text-slate-400">
-                                Cole o ID compartilhado com voc\u00ea para carregar a lista da nuvem.
+                                Cole o ID compartilhado com você para carregar a lista da nuvem.
                             </DialogDescription>
                         </DialogHeader>
                         <div className="py-4">
