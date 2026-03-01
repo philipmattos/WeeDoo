@@ -76,16 +76,15 @@ const DockItem = ({
                 <Icon size={20} strokeWidth={active ? 2.5 : 2} className="transition-all duration-300" />
             </div>
 
+            {/* Container clip mask */}
             <div
-                className={`grid transition-all duration-300 ease-out ${active ? 'grid-cols-[1fr] opacity-100 ml-2' : 'grid-cols-[0fr] opacity-0 ml-0'
-                    }`}
+                className={`overflow-hidden transition-all duration-300 ease-out flex items-center
+                    ${active ? 'max-w-[120px] opacity-100 ml-2' : 'max-w-0 opacity-0 ml-0'}`}
             >
-                <div className="overflow-hidden">
-                    <span className={`font-bold text-sm whitespace-nowrap block transition-transform duration-300 ease-out ${active ? 'translate-x-0' : '-translate-x-full'
-                        }`}>
-                        {label}
-                    </span>
-                </div>
+                <span className={`font-bold text-sm whitespace-nowrap block transition-transform duration-300 ease-out ${active ? 'translate-x-0' : '-translate-x-full'
+                    }`}>
+                    {label}
+                </span>
             </div>
         </button>
     );
