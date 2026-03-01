@@ -60,7 +60,7 @@ const ThemeToggle = () => {
     );
 };
 
-// -- Magic Dock Item with CSS Layout Animation -----------------------------------
+// -- Magic Dock Item with Layout Animation -----------------------------------
 const DockItem = ({
     icon: Icon, label, active, onClick,
 }: {
@@ -69,24 +69,24 @@ const DockItem = ({
     return (
         <button
             onClick={onClick}
-            // Transition apenas para layout (width NUNCA cores). bg sólido puro sem alpha para não causar diferença geométrica.
-            className={`flex items-center flex-nowrap h-12 rounded-full outline-none overflow-hidden relative
+            className={`flex items-center flex-nowrap h-12 rounded-full outline-none overflow-hidden relative shrink-0
                 ${active ? 'bg-white text-wd-primary shadow-sm' : 'bg-[#52ebab] hover:bg-[#4df2ae] text-white'}`}
         >
-            {/* Ícone 48px puro sem bg-inherit (isso evitava que renderizasse a cor duas vezes no quadrado) */}
-            <div className="shrink-0 flex items-center justify-center relative z-10 w-12 h-12 rounded-full">
+            <div className="shrink-0 flex items-center justify-center relative z-10 w-12 h-12 bg-inherit rounded-full">
                 <Icon size={20} strokeWidth={active ? 2.5 : 2} />
             </div>
 
-            {/* Grid Mask dita o slide largura final de 0fr até 1fr. SEM transição de opacidade da classe (retirado transition-all) */}
             <div
-                className={`grid ease-out duration-300 transition-[grid-template-columns]`}
-                style={{ gridTemplateColumns: active ? '1fr' : '0fr' }}
+                className={`grid`}
+                style={{
+                    gridTemplateColumns: active ? '1fr' : '0fr',
+                    transition: 'grid-template-columns 650ms cubic-bezier(0.16, 1, 0.3, 1)'
+                }}
             >
                 <div className="overflow-hidden flex items-center min-w-0 h-full">
-                    {/* Texto restrito a Transform transition. Sem trocar cores gradualmente */}
                     <span
-                        className={`font-bold text-sm whitespace-nowrap block transition-transform duration-300 ease-out pr-5
+                        style={{ transition: 'transform 650ms cubic-bezier(0.16, 1, 0.3, 1)' }}
+                        className={`font-bold text-sm whitespace-nowrap block pr-5
                         ${active ? 'translate-x-0' : 'translate-x-[-120%]'}`}
                     >
                         {label}
@@ -421,8 +421,8 @@ const App = () => {
             {/* Tab panels */}
             <ModalManager />
 
-            {/* Bottom Navigation (Round Dock) */}
-            <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 p-1.5 bg-wd-primary rounded-full shadow-2xl flex items-center gap-1 border border-white/10 sm:max-w-md w-max">
+            {/* Bottom Navigation (Round Dock Geométrico Dinâmico) */}
+            <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 py-1.5 px-2 bg-wd-primary rounded-full shadow-2xl flex items-center gap-1.5 border border-white/10 sm:max-w-md w-max shrink-0">
                 {navItems.map(({ id, icon, label, onClick }) => {
                     const active = id === null ? !activeModal : activeModal === id;
                     return (
