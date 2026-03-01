@@ -69,22 +69,30 @@ const DockItem = ({
     return (
         <button
             onClick={onClick}
-            className={`flex items-center justify-center flex-nowrap h-12 rounded-[14px] outline-none transition-all duration-300 ease-out
-                ${active ? 'bg-white text-wd-primary px-4 shadow-sm' : 'bg-[#e0fdf1]/20 hover:bg-[#e0fdf1]/30 text-white w-12'}`}
+            // Transition apenas para layout (width/padding inerente ao grid) NUNCA cores.
+            className={`flex items-center flex-nowrap h-12 rounded-[14px] outline-none overflow-hidden relative
+                ${active ? 'bg-white text-wd-primary shadow-sm' : 'bg-[#e0fdf1]/20 hover:bg-[#e0fdf1]/30 text-white'}`}
         >
-            <div className="shrink-0 flex items-center justify-center relative z-10 bg-inherit">
-                <Icon size={20} strokeWidth={active ? 2.5 : 2} className="transition-all duration-300" />
+            {/* Ícone 48px puro sem transição CSS */}
+            <div className="shrink-0 flex items-center justify-center relative z-10 w-12 h-12 bg-inherit rounded-[14px]">
+                <Icon size={20} strokeWidth={active ? 2.5 : 2} />
             </div>
 
-            {/* Container clip mask */}
+            {/* Grid Mask dita o slide largura final de 0fr até 1fr. SEM transição de opacidade da classe (retirado transition-all) */}
             <div
-                className={`overflow-hidden transition-all duration-300 ease-out flex items-center
-                    ${active ? 'max-w-[120px] opacity-100 ml-2' : 'max-w-0 opacity-0 ml-0'}`}
+                className={`grid ease-out`}
+                style={{ gridTemplateColumns: active ? '1fr' : '0fr', transitionProperty: 'grid-template-columns', transitionDuration: '2000ms' }}
             >
-                <span className={`font-bold text-sm whitespace-nowrap block transition-transform duration-300 ease-out ${active ? 'translate-x-0' : '-translate-x-full'
-                    }`}>
-                    {label}
-                </span>
+                <div className="overflow-hidden flex items-center min-w-0 h-full">
+                    {/* Texto restrito a Transform transition. Sem trocar cores gradualmente */}
+                    <span
+                        style={{ transitionProperty: 'transform', transitionDuration: '2000ms' }}
+                        className={`font-bold text-sm whitespace-nowrap block ease-out pr-5
+                        ${active ? 'translate-x-0' : 'translate-x-[-120%]'}`}
+                    >
+                        {label}
+                    </span>
+                </div>
             </div>
         </button>
     );
