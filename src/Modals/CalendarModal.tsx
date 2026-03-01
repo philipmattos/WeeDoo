@@ -4,7 +4,7 @@ import { useCalendarStore } from '../store/calendarStore';
 import { useTaskStore } from '../store/taskStore';
 import { useModalStore } from '../store/modalStore';
 import type { CalendarEvent } from '../types/calendar';
-import { format, parseISO, isSameDay } from 'date-fns';
+import { format, parseISO, isSameDay, startOfWeek, addDays, isSameMonth, addWeeks, subWeeks } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 import { Calendar } from '@/components/ui/calendar';
@@ -16,7 +16,7 @@ import {
     DialogTitle, DialogDescription,
 } from '@/components/ui/dialog';
 import {
-    Plus, Trash2, Clock, ChevronLeft,
+    Plus, Trash2, Clock, ChevronLeft, ChevronRight,
     CalendarDays, CheckSquare, AlertCircle,
 } from 'lucide-react';
 
@@ -102,6 +102,7 @@ export const CalendarModal = () => {
     const openModal = useModalStore(s => s.openModal);
 
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+    const [viewMode, setViewMode] = useState<'month' | 'week'>('month');
     const [isAddOpen, setIsAddOpen] = useState(false);
     const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
 
@@ -194,11 +195,38 @@ export const CalendarModal = () => {
     const formattedSelectedDate = format(selectedDate, "EEEE, d 'de' MMMM", { locale: ptBR });
     const totalDayItems = dayEvents.length + dayTasks.length;
 
+    // Build the 7 days of the selected week for the Week View
+    const getWeekDays = (baseDate: Date) => {
+        const start = startOfWeek(baseDate, { weekStartsOn: 0 }); // Sunday default
+        const days = [];
+        for (let i = 0; i < 7; i++) {
+            days.push(addDays(start, i));
+        }
+        return days;
+    };
+    const weekDaysArray = getWeekDays(selectedDate);
+    const hasEventInDay = (day: Date) => allHighlightedDates.some(hd => isSameDay(hd, day));
+
     return (
         <BaseModal id="calendar" title="Calendário">
             <div className="flex flex-col gap-4 pb-8">
 
-                {/* ── Calendar ──────────────────────────────────────────── */}
+                <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-full self-center mb-1">
+                    <button
+                        onClick={() => setViewMode('month')}
+                        className={`px-6 py-1.5 rounded-full text-sm font-bold transition-all ${viewMode === 'month' ? 'bg-white dark:bg-slate-700 text-wd-primary shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'}`}
+                    >
+                        Mês
+                    </button>
+                    <button
+                        onClick={() => setViewMode('week')}
+                        className={`px-6 py-1.5 rounded-full text-sm font-bold transition-all ${viewMode === 'week' ? 'bg-white dark:bg-slate-700 text-wd-primary shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'}`}
+                    >
+                        Semana
+                    </button>
+                </div>
+
+                {/* ── Calendar (Conditional) ──────────────────────────────────────────── */}
                 <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden">
 
                     {/* Dot indicators CSS */}
@@ -219,28 +247,76 @@ export const CalendarModal = () => {
                         }
                     `}</style>
 
-                    <Calendar
-                        mode="single"
-                        selected={selectedDate}
-                        onSelect={(d) => d && setSelectedDate(d)}
-                        locale={ptBR}
-                        modifiers={modifiers}
-                        modifiersClassNames={modifiersClassNames}
-                        className="w-full [--cell-size:2.5rem]"
-                        classNames={{
-                            months: 'w-full',
-                            month: 'w-full',
-                            table: 'w-full',
-                            weekdays: 'flex justify-between px-4',
-                            weekday: 'flex-1 text-center text-xs text-slate-400 dark:text-slate-500 font-medium py-2',
-                            week: 'flex justify-between px-2',
-                            day: 'flex-1 flex items-center justify-center aspect-square',
-                            month_caption: 'flex h-10 w-full items-center justify-center px-10',
-                            caption_label: 'text-sm font-bold text-slate-800 dark:text-slate-100 capitalize',
-                            nav: 'absolute inset-x-0 top-0 flex w-full items-center justify-between px-2 pt-1',
-                            today: 'font-bold text-wd-primary',
-                        }}
-                    />
+                    {viewMode === 'month' ? (
+                        <Calendar
+                            mode="single"
+                            selected={selectedDate}
+                            onSelect={(d) => d && setSelectedDate(d)}
+                            locale={ptBR}
+                            modifiers={modifiers}
+                            modifiersClassNames={modifiersClassNames}
+                            className="w-full [--cell-size:2.5rem]"
+                            classNames={{
+                                months: 'w-full',
+                                month: 'w-full',
+                                table: 'w-full',
+                                weekdays: 'flex justify-between px-4',
+                                weekday: 'flex-1 text-center text-xs text-slate-400 dark:text-slate-500 font-medium py-2',
+                                week: 'flex justify-between px-2',
+                                day: 'flex-1 flex items-center justify-center aspect-square',
+                                month_caption: 'flex h-10 w-full items-center justify-center px-10',
+                                caption_label: 'text-sm font-bold text-slate-800 dark:text-slate-100 capitalize',
+                                nav: 'absolute inset-x-0 top-0 flex w-full items-center justify-between px-2 pt-1',
+                                today: 'font-bold text-wd-primary',
+                            }}
+                        />
+                    ) : (
+                        <div className="flex flex-col w-full p-4 pt-4 pb-5">
+                            <div className="flex items-center justify-between mb-4 px-2">
+                                <button
+                                    onClick={() => setSelectedDate(subWeeks(selectedDate, 1))}
+                                    className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg text-slate-500"
+                                >
+                                    <ChevronLeft size={20} />
+                                </button>
+                                <span className="text-sm font-bold text-slate-800 dark:text-slate-100 capitalize">
+                                    {format(weekDaysArray[0], "MMMM yyyy", { locale: ptBR })}
+                                </span>
+                                <button
+                                    onClick={() => setSelectedDate(addWeeks(selectedDate, 1))}
+                                    className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg text-slate-500"
+                                >
+                                    <ChevronRight size={20} />
+                                </button>
+                            </div>
+                            <div className="flex justify-between w-full">
+                                {weekDaysArray.map((day, i) => {
+                                    const isSelected = isSameDay(day, selectedDate);
+                                    const isToday = isSameDay(day, new Date());
+                                    const hasEvent = hasEventInDay(day);
+
+                                    return (
+                                        <button
+                                            key={i}
+                                            onClick={() => setSelectedDate(day)}
+                                            className={`flex flex-col items-center justify-center w-10 h-14 rounded-2xl transition-all relative
+                                                ${isSelected ? 'bg-wd-primary text-white shadow-md scale-105' : 'hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300'}`}
+                                        >
+                                            <span className={`text-[10px] font-bold uppercase mb-1 ${isSelected ? 'text-white/80' : isToday ? 'text-wd-primary' : 'text-slate-400'}`}>
+                                                {format(day, 'EEEEEE', { locale: ptBR })}
+                                            </span>
+                                            <span className={`text-base font-extrabold ${isSelected ? 'text-white' : isToday ? 'text-wd-primary' : ''}`}>
+                                                {format(day, 'd')}
+                                            </span>
+                                            {hasEvent && (
+                                                <span className={`absolute bottom-1 w-1 h-1 rounded-full ${isSelected ? 'bg-white' : 'bg-wd-primary'}`} />
+                                            )}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* ── Day Header ────────────────────────────────────────── */}
