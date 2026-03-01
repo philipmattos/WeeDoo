@@ -243,21 +243,23 @@ export const WelcomeScreen = () => {
                 if (!open && !generateSaveCode) setIsDialogOpen(false);
             }}>
                 <DialogContent className="sm:max-w-xs rounded-[2rem] bg-white dark:bg-slate-800 border-none p-6 shadow-2xl w-[90vw]" onInteractOutside={(e) => e.preventDefault()}>
-                    <DialogHeader className="mb-2 items-center">
-                        <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 text-red-500 rounded-full flex items-center justify-center mb-2 shadow-sm">
-                            <AlertTriangle size={32} />
+                    <DialogHeader className="mb-2">
+                        <div className="flex items-center gap-3">
+                            <div className="text-red-500 shrink-0">
+                                <AlertTriangle size={28} strokeWidth={2.5} />
+                            </div>
+                            <DialogTitle className="text-left text-xl font-extrabold text-[#0c2f37] dark:text-slate-100">Guarde sua ID!</DialogTitle>
                         </div>
-                        <DialogTitle className="text-center text-xl font-extrabold text-[#0c2f37] dark:text-slate-100">Guarde sua ID!</DialogTitle>
                     </DialogHeader>
 
-                    <div className="text-center space-y-4">
-                        <div className="text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-700">
+                    <div className="w-full flex flex-col items-center space-y-5">
+                        <div className="text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed text-left w-full">
                             Essa ID guarda <strong>todas</strong> as suas informações. <br />
-                            <span className="text-red-500 font-bold">Se você perder essa ID, não poderá recuperar seus dados nunca mais.</span> Não compartilhe com ninguém.
+                            <span className="text-red-500 font-bold">Se você perder essa ID, não poderá recuperar seus dados.</span> Não compartilhe com ninguém.
                         </div>
 
-                        <div className="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-4 rounded-2xl flex items-center justify-between gap-3 group">
-                            <code className="text-lg font-black tracking-wider text-slate-800 dark:text-slate-100 w-full text-center select-all">
+                        <div className="w-[85%] bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-3 px-4 rounded-2xl flex items-center justify-between gap-3 group">
+                            <code className="text-base font-black tracking-wider text-slate-800 dark:text-slate-100 w-full text-center select-all">
                                 {generatedCode}
                             </code>
                             <Button
@@ -269,12 +271,12 @@ export const WelcomeScreen = () => {
                                 <Copy size={18} />
                             </Button>
                         </div>
-                        {copied && <p className="text-xs text-emerald-500 font-bold animate-pulse -mt-2">Copiado para área de transferência!</p>}
+                        {copied && <p className="text-xs text-emerald-500 font-bold animate-pulse -mt-3">Copiado para área de transferência!</p>}
 
                         <Button
                             onClick={handleConfirmAndEnter}
                             disabled={!hasCopiedOnce}
-                            className="w-full h-12 rounded-full font-bold bg-wd-primary hover:bg-wd-primary-dark text-white mt-4 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                            className="w-[85%] h-12 rounded-full font-bold bg-wd-primary hover:bg-wd-primary-dark text-white mt-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                         >
                             {hasCopiedOnce ? 'Entrar no Aplicativo' : 'Copie a ID primeiro'}
                         </Button>
