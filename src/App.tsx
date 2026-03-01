@@ -72,7 +72,7 @@ const DockItem = ({
             className={`flex items-center justify-center flex-nowrap h-12 rounded-[14px] outline-none transition-all duration-300 ease-out
                 ${active ? 'bg-white text-wd-primary px-4 shadow-sm' : 'bg-[#e0fdf1]/20 hover:bg-[#e0fdf1]/30 text-white w-12'}`}
         >
-            <div className="shrink-0 flex items-center justify-center">
+            <div className="shrink-0 flex items-center justify-center relative z-10 bg-inherit">
                 <Icon size={20} strokeWidth={active ? 2.5 : 2} className="transition-all duration-300" />
             </div>
 
@@ -81,7 +81,8 @@ const DockItem = ({
                     }`}
             >
                 <div className="overflow-hidden">
-                    <span className="font-bold text-sm whitespace-nowrap block">
+                    <span className={`font-bold text-sm whitespace-nowrap block transition-transform duration-300 ease-out ${active ? 'translate-x-0' : '-translate-x-full'
+                        }`}>
                         {label}
                     </span>
                 </div>
