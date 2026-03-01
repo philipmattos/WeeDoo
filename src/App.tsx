@@ -70,11 +70,12 @@ const DockItem = ({
     return (
         <motion.button
             layout
+            transition={{ type: "tween", ease: "easeInOut", duration: 0.25 }}
             onClick={onClick}
             // we use style={{ borderRadius: 9999 }} below to enforce pill shape during layout transition
             style={{ borderRadius: 9999 }}
             className={`flex items-center justify-center flex-nowrap h-12 outline-none
-                ${active ? 'bg-white text-[#044c33] px-4 shadow-sm' : 'bg-[#e0fdf1]/30 hover:bg-[#e0fdf1]/40 text-[#044c33] w-12'}`}
+                ${active ? 'bg-white text-wd-primary px-4 shadow-sm' : 'bg-[#e0fdf1]/20 hover:bg-[#e0fdf1]/30 text-white w-12'}`}
         >
             <motion.div layout className="shrink-0 flex items-center justify-center">
                 <Icon size={20} strokeWidth={active ? 2.5 : 2} />
@@ -85,10 +86,10 @@ const DockItem = ({
                     <motion.span
                         key="label"
                         layout
-                        initial={{ opacity: 0, width: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, width: 'auto', scale: 1 }}
-                        exit={{ opacity: 0, width: 0, scale: 0.8 }}
-                        transition={{ opacity: { duration: 0.2 }, layout: { type: "spring", bounce: 0.15, duration: 0.4 } }}
+                        initial={{ opacity: 0, width: 0 }}
+                        animate={{ opacity: 1, width: 'auto' }}
+                        exit={{ opacity: 0, width: 0 }}
+                        transition={{ opacity: { duration: 0.2 }, layout: { type: "tween", ease: "easeInOut", duration: 0.25 } }}
                         className="ml-2 font-bold text-sm overflow-hidden whitespace-nowrap"
                     >
                         {label}
