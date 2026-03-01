@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import { format, isBefore, endOfDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { motion, AnimatePresence } from 'framer-motion';
 
 type ModalType = 'notes' | 'tasks' | 'kanban' | 'calendar' | 'groceries' | null;
 
@@ -61,42 +60,33 @@ const ThemeToggle = () => {
     );
 };
 
-// -- Magic Dock Item with Layout Animation -----------------------------------
+// -- Magic Dock Item with CSS Layout Animation -----------------------------------
 const DockItem = ({
     icon: Icon, label, active, onClick,
 }: {
-    id: string | null; icon: React.ElementType; label: string; active: boolean; onClick: () => void;
+    icon: React.ElementType; label: string; active: boolean; onClick: () => void;
 }) => {
     return (
-        <motion.button
-            layout
-            transition={{ type: "tween", ease: "easeInOut", duration: 0.25 }}
+        <button
             onClick={onClick}
-            // slightly rounded corner equivalent to about rounded-xl/2xl
-            style={{ borderRadius: 14 }}
-            className={`flex items-center justify-center flex-nowrap h-12 outline-none
+            className={`flex items-center justify-center flex-nowrap h-12 rounded-[14px] outline-none transition-all duration-300 ease-out
                 ${active ? 'bg-white text-wd-primary px-4 shadow-sm' : 'bg-[#e0fdf1]/20 hover:bg-[#e0fdf1]/30 text-white w-12'}`}
         >
-            <motion.div layout className="shrink-0 flex items-center justify-center">
-                <Icon size={20} strokeWidth={active ? 2.5 : 2} />
-            </motion.div>
+            <div className="shrink-0 flex items-center justify-center">
+                <Icon size={20} strokeWidth={active ? 2.5 : 2} className="transition-all duration-300" />
+            </div>
 
-            <AnimatePresence mode="popLayout">
-                {active && (
-                    <motion.span
-                        key="label"
-                        layout
-                        initial={{ opacity: 0, width: 0 }}
-                        animate={{ opacity: 1, width: 'auto' }}
-                        exit={{ opacity: 0, width: 0 }}
-                        transition={{ opacity: { duration: 0.2 }, layout: { type: "tween", ease: "easeInOut", duration: 0.25 } }}
-                        className="ml-2 font-bold text-sm overflow-hidden whitespace-nowrap"
-                    >
+            <div
+                className={`grid transition-all duration-300 ease-out ${active ? 'grid-cols-[1fr] opacity-100 ml-2' : 'grid-cols-[0fr] opacity-0 ml-0'
+                    }`}
+            >
+                <div className="overflow-hidden">
+                    <span className="font-bold text-sm whitespace-nowrap block">
                         {label}
-                    </motion.span>
-                )}
-            </AnimatePresence>
-        </motion.button>
+                    </span>
+                </div>
+            </div>
+        </button>
     );
 };
 
@@ -431,7 +421,6 @@ const App = () => {
                     return (
                         <DockItem
                             key={label}
-                            id={id as string}
                             icon={icon}
                             label={label}
                             active={active}
