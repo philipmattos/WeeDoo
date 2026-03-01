@@ -10,6 +10,7 @@ import { useKanbanStore } from '../../store/kanbanStore';
 import { useNotesStore } from '../../store/notesStore';
 import { useCalendarStore } from '../../store/calendarStore';
 import { useThemeStore } from '../../store/themeStore';
+import { useModalStore } from '../../store/modalStore';
 
 export const WelcomeScreen = () => {
     const { loginWithCode, generateSaveCode } = useAuthStore();
@@ -38,6 +39,7 @@ export const WelcomeScreen = () => {
 
     const handleConfirmAndEnter = () => {
         setIsDialogOpen(false);
+        useModalStore.getState().closeModal();
         loginWithCode(generatedCode);
     };
 
@@ -74,6 +76,7 @@ export const WelcomeScreen = () => {
                 if (configRes) useThemeStore.setState(JSON.parse(configRes.fields.Data));
 
                 setIsHydrating(false);
+                useModalStore.getState().closeModal();
                 loginWithCode(code); // Libera o acesso para o Dashboard
             } catch (error) {
                 console.error("Hydration failed due to network error.", error);

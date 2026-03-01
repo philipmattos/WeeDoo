@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { format, isBefore, endOfDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { motion, AnimatePresence } from 'framer-motion';
 
 type ModalType = 'notes' | 'tasks' | 'kanban' | 'calendar' | 'groceries' | null;
 
@@ -60,28 +61,41 @@ const ThemeToggle = () => {
     );
 };
 
-// -- Nav Button with pop animation -------------------------------------------
-const NavButton = ({
-    id, icon: Icon, label, active, onClick,
+// -- Magic Dock Item with Layout Animation -----------------------------------
+const DockItem = ({
+    icon: Icon, label, active, onClick,
 }: {
     id: string | null; icon: React.ElementType; label: string; active: boolean; onClick: () => void;
 }) => {
     return (
-        <button
+        <motion.button
+            layout
             onClick={onClick}
-            className={`flex flex-col items-center gap-1 cursor-pointer transition-colors ${active ? 'text-wd-primary' : 'text-slate-400 dark:text-slate-500'
-                }`}
+            // we use style={{ borderRadius: 9999 }} below to enforce pill shape during layout transition
+            style={{ borderRadius: 9999 }}
+            className={`flex items-center justify-center flex-nowrap h-12 outline-none
+                ${active ? 'bg-white text-[#044c33] px-4 shadow-sm' : 'bg-[#e0fdf1]/30 hover:bg-[#e0fdf1]/40 text-[#044c33] w-12'}`}
         >
-            {/* key on active triggers remount => wd-nav-pop plays */}
-            <span key={active ? `${id}-on` : `${id}-off`}
-                className={active ? 'wd-nav-pop' : ''}>
-                <Icon size={24} className={active ? 'stroke-[2.5px]' : ''} />
-            </span>
-            <span key={active ? `${id}-lbl-on` : `${id}-lbl-off`}
-                className={`text-[11px] ${active ? 'wd-label-up font-semibold' : ''}`}>
-                {label}
-            </span>
-        </button>
+            <motion.div layout className="shrink-0 flex items-center justify-center">
+                <Icon size={20} strokeWidth={active ? 2.5 : 2} />
+            </motion.div>
+
+            <AnimatePresence mode="popLayout">
+                {active && (
+                    <motion.span
+                        key="label"
+                        layout
+                        initial={{ opacity: 0, width: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, width: 'auto', scale: 1 }}
+                        exit={{ opacity: 0, width: 0, scale: 0.8 }}
+                        transition={{ opacity: { duration: 0.2 }, layout: { type: "spring", bounce: 0.15, duration: 0.4 } }}
+                        className="ml-2 font-bold text-sm overflow-hidden whitespace-nowrap"
+                    >
+                        {label}
+                    </motion.span>
+                )}
+            </AnimatePresence>
+        </motion.button>
     );
 };
 
@@ -409,23 +423,21 @@ const App = () => {
             {/* Tab panels */}
             <ModalManager />
 
-            {/* Bottom Navigation */}
-            <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700 sm:max-w-md sm:mx-auto pb-4 pt-3 px-6 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
-                <div className="flex justify-between items-center">
-                    {navItems.map(({ id, icon, label, onClick }) => {
-                        const active = id === null ? !activeModal : activeModal === id;
-                        return (
-                            <NavButton
-                                key={label}
-                                id={id as string}
-                                icon={icon}
-                                label={label}
-                                active={active}
-                                onClick={onClick}
-                            />
-                        );
-                    })}
-                </div>
+            {/* Bottom Navigation (Magic Dock) */}
+            <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 p-1.5 bg-wd-primary rounded-full shadow-2xl flex items-center gap-1 border border-white/10 sm:max-w-md w-max">
+                {navItems.map(({ id, icon, label, onClick }) => {
+                    const active = id === null ? !activeModal : activeModal === id;
+                    return (
+                        <DockItem
+                            key={label}
+                            id={id as string}
+                            icon={icon}
+                            label={label}
+                            active={active}
+                            onClick={onClick}
+                        />
+                    );
+                })}
             </nav>
 
             {/* Sync Manager (Invisible Worker) */}
