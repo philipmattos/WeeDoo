@@ -72,7 +72,8 @@ const DockItem = ({
             layout
             transition={{ type: "tween", ease: "easeInOut", duration: 0.25 }}
             onClick={onClick}
-            style={{ borderRadius: 0 }}
+            // slightly rounded corner equivalent to about rounded-xl/2xl
+            style={{ borderRadius: 14 }}
             className={`flex items-center justify-center flex-nowrap h-12 outline-none
                 ${active ? 'bg-white text-wd-primary px-4 shadow-sm' : 'bg-[#e0fdf1]/20 hover:bg-[#e0fdf1]/30 text-white w-12'}`}
         >
@@ -424,7 +425,7 @@ const App = () => {
             <ModalManager />
 
             {/* Bottom Navigation (Square Dock) */}
-            <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 p-1.5 bg-wd-primary rounded-none shadow-2xl flex items-center gap-1 border border-white/10 sm:max-w-md w-max">
+            <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 p-1.5 bg-wd-primary rounded-2xl shadow-2xl flex items-center gap-1 border border-white/10 sm:max-w-md w-max">
                 {navItems.map(({ id, icon, label, onClick }) => {
                     const active = id === null ? !activeModal : activeModal === id;
                     return (
