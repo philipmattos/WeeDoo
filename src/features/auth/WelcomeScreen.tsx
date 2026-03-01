@@ -91,36 +91,25 @@ export const WelcomeScreen = () => {
         <div className="flex flex-col h-screen overflow-hidden bg-wd-primary dark:bg-[#04C776] text-white font-sans sm:max-w-md sm:mx-auto sm:shadow-2xl sm:border-x border-white/10 justify-center p-6 px-8 relative">
             <style>{`
                 @keyframes float-and-spin {
-                    0%, 30%, 60%, 88% { transform: translateY(0px) rotate(0deg); animation-timing-function: ease-in-out; }
-                    15%, 45%, 75% { transform: translateY(-18px) rotate(0deg); animation-timing-function: ease-in-out; }
-                    92% { transform: translateY(0px) rotate(0deg); animation-timing-function: cubic-bezier(0.8, 0, 0.2, 1); }
-                    100% { transform: translateY(0px) rotate(720deg); }
+                    0% { transform: translateY(0px) rotate(0deg); animation-timing-function: cubic-bezier(0.8, 0, 0.2, 1); }
+                    8% { transform: translateY(0px) rotate(720deg); animation-timing-function: ease-in-out; }
+                    10%, 28%, 46%, 64%, 82%, 100% { transform: translateY(0px) rotate(720deg); animation-timing-function: ease-in-out; }
+                    19%, 37%, 55%, 73%, 91% { transform: translateY(-18px) rotate(720deg); animation-timing-function: ease-in-out; }
                 }
                 @keyframes float-shadow {
-                    0%, 30%, 60%, 88% { 
+                    0%, 8%, 10%, 28%, 46%, 64%, 82%, 100% { 
                         /* CUB DOWN: Sombra Menor (Mas nunca menor que o cubo, scale 1.02 mínimo), Escura, Nítida */
                         transform: scale(1.02); 
                         background-color: rgba(0,0,0,0.4); 
                         filter: blur(4px); 
                         animation-timing-function: ease-in-out; 
                     }
-                    15%, 45%, 75% { 
+                    19%, 37%, 55%, 73%, 91% { 
                         /* CUBO UP: Sombra Larga, Transparente, Difusa */
                         transform: scale(1.3); 
                         background-color: rgba(0,0,0,0.15); 
                         filter: blur(12px); 
                         animation-timing-function: ease-in-out; 
-                    }
-                    92% { 
-                        transform: scale(1.02); 
-                        background-color: rgba(0,0,0,0.4); 
-                        filter: blur(4px); 
-                        animation-timing-function: cubic-bezier(0.8, 0, 0.2, 1); 
-                    }
-                    100% { 
-                        transform: scale(1.02); 
-                        background-color: rgba(0,0,0,0.4); 
-                        filter: blur(4px); 
                     }
                 }
                 @keyframes fade-in-logo {
@@ -137,7 +126,7 @@ export const WelcomeScreen = () => {
                 }
                 .anim-logo {
                     opacity: 0;
-                    animation: fade-in-logo 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.8s, float-and-spin 8.8s infinite 2.3s;
+                    animation: fade-in-logo 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.8s, float-and-spin 20s infinite 2.3s;
                 }
                 .anim-shadow {
                     opacity: 0;
@@ -145,7 +134,7 @@ export const WelcomeScreen = () => {
                     background-color: rgba(0,0,0,0.4);
                     filter: blur(4px);
                     transform: scale(1.02);
-                    animation: fade-in-shadow 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.8s, float-shadow 8.8s infinite 2.3s;
+                    animation: fade-in-shadow 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.8s, float-shadow 20s infinite 2.3s;
                 }
                 .anim-content-1 {
                     opacity: 0;
