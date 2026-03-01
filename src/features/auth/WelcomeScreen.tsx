@@ -91,18 +91,45 @@ export const WelcomeScreen = () => {
         <div className="flex flex-col h-screen overflow-hidden bg-wd-primary dark:bg-[#04C776] text-white font-sans sm:max-w-md sm:mx-auto sm:shadow-2xl sm:border-x border-white/10 justify-center p-6 px-8 relative">
             <style>{`
                 @keyframes float-and-spin {
-                    0% { transform: translateY(0px) rotate(0deg); }
-                    15% { transform: translateY(-12px) rotate(0deg); }
-                    30% { transform: translateY(0px) rotate(0deg); }
-                    45% { transform: translateY(-12px) rotate(0deg); }
-                    60% { transform: translateY(0px) rotate(0deg); }
-                    75% { transform: translateY(-12px) rotate(0deg); }
+                    0%, 30%, 60%, 88% { transform: translateY(0px) rotate(0deg); animation-timing-function: ease-in-out; }
+                    15%, 45%, 75% { transform: translateY(-18px) rotate(0deg); animation-timing-function: ease-in-out; }
                     92% { transform: translateY(0px) rotate(0deg); animation-timing-function: cubic-bezier(0.8, 0, 0.2, 1); }
                     100% { transform: translateY(0px) rotate(720deg); }
+                }
+                @keyframes float-shadow {
+                    0%, 30%, 60%, 88% { 
+                        /* CUB DOWN: Sombra Menor (Mas nunca menor que o cubo, scale 1.02 mínimo), Escura, Nítida */
+                        transform: scale(1.02); 
+                        background-color: rgba(0,0,0,0.4); 
+                        filter: blur(4px); 
+                        animation-timing-function: ease-in-out; 
+                    }
+                    15%, 45%, 75% { 
+                        /* CUBO UP: Sombra Larga, Transparente, Difusa */
+                        transform: scale(1.3); 
+                        background-color: rgba(0,0,0,0.15); 
+                        filter: blur(12px); 
+                        animation-timing-function: ease-in-out; 
+                    }
+                    92% { 
+                        transform: scale(1.02); 
+                        background-color: rgba(0,0,0,0.4); 
+                        filter: blur(4px); 
+                        animation-timing-function: cubic-bezier(0.8, 0, 0.2, 1); 
+                    }
+                    100% { 
+                        transform: scale(1.02); 
+                        background-color: rgba(0,0,0,0.4); 
+                        filter: blur(4px); 
+                    }
                 }
                 @keyframes fade-in-logo {
                     0% { opacity: 0; transform: scale(0.9) translateY(20px); }
                     100% { opacity: 1; transform: scale(1) translateY(0); }
+                }
+                @keyframes fade-in-shadow {
+                    0% { opacity: 0; }
+                    100% { opacity: 1; }
                 }
                 @keyframes fade-in-up-stagger {
                     0% { opacity: 0; transform: translateY(30px); }
@@ -114,7 +141,11 @@ export const WelcomeScreen = () => {
                 }
                 .anim-shadow {
                     opacity: 0;
-                    animation: fade-in-logo 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.8s;
+                    /* Defino os estilos iniciais da sombra ANTES da animação de float (2.3s) entrar em ação, para que ela surja instantaneamente com opacity 0 -> 1 */
+                    background-color: rgba(0,0,0,0.4);
+                    filter: blur(4px);
+                    transform: scale(1.02);
+                    animation: fade-in-shadow 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.8s, float-shadow 8.8s infinite 2.3s;
                 }
                 .anim-content-1 {
                     opacity: 0;
@@ -136,15 +167,28 @@ export const WelcomeScreen = () => {
 
             <div className="text-center mb-10 z-10 flex flex-col items-center">
                 <div className="relative mb-8">
-                    <div className="anim-logo w-24 h-24 bg-white text-wd-primary rounded-[2rem] flex items-center justify-center shadow-xl relative z-10">
+                    {/* RAIO DE ARREDONDAMENTO (BORDER-RADIUS)
+                        Atualmente está em: rounded-[1.25rem] (20px de raio).
+                        Para testar manualmente, altere a classe abaixo.
+                        Sugestões de valores Tailwind para tentar:
+                        - rounded-lg    (menor, cantos mais secos 8px)
+                        - rounded-xl    (suave padrão 12px)
+                        - rounded-2xl   (o que você usa em alguns botões, 16px)
+                        - rounded-[1.5rem] (intermediário 24px)
+                        - rounded-[2rem] (como estava antes, quase um círculo 32px)
+                    */}
+                    <div className="anim-logo w-24 h-24 bg-white text-wd-primary rounded-[1.25rem] flex items-center justify-center shadow-xl relative z-10">
                         <LaptopMinimalCheck size={48} strokeWidth={2.5} />
                     </div>
-                    {/* Sombra da flutuação */}
-                    <div className="anim-shadow absolute -bottom-4 left-1/2 -translate-x-1/2 w-16 h-4 bg-black/35 blur-md rounded-full"></div>
+                    {/* O wrapper mantém a centralização rígida, evitando que o Transform da sombra seja sobrescrito */}
+                    <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex items-center justify-center">
+                        {/* A sombra começa exatamente do tamanho da pílula (w-24 = 96px). Ao bater no chão, a opacidade e o blur apertam, mas a lagura nunca será menor que o ícone */}
+                        <div className="anim-shadow w-24 h-4 rounded-[100%]"></div>
+                    </div>
                 </div>
 
                 <div className="anim-content-1">
-                    <h1 className="text-4xl font-extrabold tracking-tight mb-3 drop-shadow-md">WeeDoo</h1>
+                    <strong><h1 className="text-4xl font-extrabold tracking-tight mb-3 drop-shadow-md">WeeDoo</h1></strong>
                     <p className="text-white/80 text-sm leading-relaxed px-2 font-medium">
                         Seu hub pessoal de produtividade.<br />
                         Local-First e totalmente seguro.
@@ -152,21 +196,21 @@ export const WelcomeScreen = () => {
                 </div>
             </div>
 
-            <div className="space-y-6 z-10 w-full flex flex-col items-center anim-content-1">
+            <div className="space-y-6 mt-8 z-10 w-full flex flex-col items-center anim-content-1">
                 <Button
                     onClick={handleCreateNew}
-                    className="w-full h-14 text-lg rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.15)] hover:shadow-xl hover:-translate-y-1 transition-all bg-white hover:bg-slate-50 font-bold text-wd-primary flex items-center justify-center gap-3 [&_svg]:size-6"
+                    className="w-[92%] h-14 text-lg rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.15)] hover:shadow-xl hover:-translate-y-1 transition-all bg-white hover:bg-slate-50 font-bold text-wd-primary flex items-center justify-center gap-3 [&_svg]:size-6"
                 >
                     <UserRoundKey size={32} strokeWidth={2.5} />
                     Criar novo usuário
                 </Button>
 
-                <div className="w-full relative flex items-center justify-center py-2 anim-content-2">
+                <div className="w-[92%] relative flex items-center justify-center py-2 anim-content-2">
                     <div className="border-t border-white/20 w-full absolute"></div>
                     <span className="bg-wd-primary dark:bg-[#04C776] px-4 text-xs font-bold text-white/70 uppercase tracking-widest z-10 relative">OU</span>
                 </div>
 
-                <form onSubmit={handleLogin} className="w-full relative flex flex-col gap-3 anim-content-2">
+                <form onSubmit={handleLogin} className="w-[92%] relative flex flex-col gap-3 anim-content-2">
                     <label className="text-sm font-semibold text-white/90 ml-2 drop-shadow-sm">Já possuo um Savecode</label>
                     <div className={`flex bg-white/20 backdrop-blur-md p-1 rounded-full shadow-inner border border-white/30 focus-within:ring-2 focus-within:ring-white/50 transition-shadow ${loginError ? 'anim-shake' : ''}`}>
                         <Input
@@ -174,7 +218,7 @@ export const WelcomeScreen = () => {
                             placeholder="Ex: wd-A8K3PX9V..."
                             value={codeInput}
                             onChange={(e) => setCodeInput(e.target.value)}
-                            className="flex-1 h-12 bg-transparent text-white border-none shadow-none focus-visible:ring-0 px-4 text-base font-bold placeholder:text-white/50"
+                            className="flex-1 h-12 bg-transparent text-white border-none shadow-none focus-visible:ring-0 px-4 text-base font-bold placeholder:text-white/50 placeholder:font-normal"
                             required
                         />
                         <Button
